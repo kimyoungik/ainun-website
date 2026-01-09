@@ -140,9 +140,9 @@ export default function App() {
       </header>
 
       {/* 히어로 섹션 */}
-      <section className="hero-pattern relative overflow-hidden">
-        <div className="max-w-6xl mx-auto px-4 py-16 md:py-24">
-          <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+      <section className="hero-pattern relative overflow-hidden pb-24 md:pb-32">
+        <div className="max-w-6xl mx-auto px-4 py-16 md:py-20 lg:py-24">
+          <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 lg:gap-16">
             <div className="flex-1 text-center md:text-left slide-up">
               <div className="inline-block bg-sky-100 text-sky-600 px-4 py-1 rounded-full text-sm font-medium mb-4">
                 🎉 2026년 새해 특별 할인 중!
@@ -155,7 +155,7 @@ export default function App() {
                 어린이 눈높이에 맞춘 쉽고 재미있는 뉴스!<br />
                 <strong className="text-amber-500">매주 새로운 세상</strong>을 만나보세요.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start mb-4 md:mb-0">
                 <button className="bg-gradient-to-r from-sky-400 to-sky-500 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl transition-all hover:scale-105 bounce-soft">
                   📰 무료 체험 신청
                 </button>
@@ -165,7 +165,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="flex-1 relative float">
+            <div className="flex-1 relative float mt-8 md:mt-0">
               <div className="relative w-full max-w-lg mx-auto">
                 <div className="bg-white rounded-2xl shadow-2xl p-3 transform rotate-1 hover:rotate-0 transition-transform">
                   <img src="/newspaper.png" alt="아이눈 신문" className="w-full h-auto rounded-lg" />
