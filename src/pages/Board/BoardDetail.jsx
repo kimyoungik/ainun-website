@@ -26,6 +26,9 @@ export default function BoardDetail() {
   const [error, setError] = useState(null);
   const [isLiking, setIsLiking] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState('');
+  const [editContent, setEditContent] = useState('');
 
   useEffect(() => {
     loadPost();
@@ -86,6 +89,64 @@ export default function BoardDetail() {
       await loadPost();
       alert('댓글이 작성되었습니다!');
     } catch (err) {
+      throw err;
+    }
+  };
+
+  const handleDeletePost = async () => {
+    if (!confirm('정말 삭제하시겠습니까?')) return;
+
+    try {
+      await boardService.deletePost(id);
+      alert('게시글이 삭제되었습니다.');
+      navigate('/board');
+    } catch (err) {
+      alert(err.message || '삭제에 실패했습니다.');
+    }
+  };
+
+  const handleEditPost = () => {
+    setEditTitle(post.title);
+    setEditContent(post.content);
+    setIsEditing(true);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditTitle('');
+    setEditContent('');
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      await boardService.updatePost(id, editTitle, editContent);
+      alert('게시글이 수정되었습니다.');
+      setIsEditing(false);
+      await loadPost();
+    } catch (err) {
+      alert(err.message || '수정에 실패했습니다.');
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    if (!confirm('댓글을 삭제하시겠습니까?')) return;
+
+    try {
+      await boardService.deleteComment(commentId);
+      alert('댓글이 삭제되었습니다.');
+      await loadPost();
+    } catch (err) {
+      alert(err.message || '삭제에 실패했습니다.');
+    }
+  };
+
+  const handleEditComment = async (commentId, content) => {
+    try {
+      await boardService.updateComment(commentId, content);
+      alert('댓글이 수정되었습니다.');
+      await loadPost();
+    } catch (err) {
+      alert(err.message || '수정에 실패했습니다.');
       throw err;
     }
   };
@@ -152,20 +213,75 @@ export default function BoardDetail() {
               <div className="font-bold text-lg text-gray-800">{post.author}</div>
               <div className="text-gray-500">{post.authorGrade}</div>
             </div>
-            <div className="text-right text-sm text-gray-400">
-              <div>{formatDate(post.createdAt)}</div>
+            <div className="flex items-center gap-2">
+              <div className="text-right text-sm text-gray-400 mr-2">
+                <div>{formatDate(post.createdAt)}</div>
+              </div>
+              {/* 수정/삭제 버튼 (본인 게시글만) */}
+              {currentUser && currentUser.id === post.userId && (
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleEditPost}
+                    className="text-sm px-3 py-1 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors"
+                  >
+                    수정
+                  </button>
+                  <button
+                    onClick={handleDeletePost}
+                    className="text-sm px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                  >
+                    삭제
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* 제목 */}
-          <h1 className="font-jua text-3xl md:text-4xl text-gray-800 mb-6 leading-tight">
-            {post.title}
-          </h1>
+          {isEditing ? (
+            /* 수정 모드 */
+            <>
+              <input
+                type="text"
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+                className="w-full font-jua text-3xl md:text-4xl text-gray-800 mb-6 leading-tight border-2 border-gray-300 rounded-xl p-3 focus:outline-none focus:border-sky-500"
+                placeholder="제목을 입력하세요"
+              />
+              <textarea
+                value={editContent}
+                onChange={(e) => setEditContent(e.target.value)}
+                className="w-full text-gray-700 leading-relaxed mb-8 text-lg border-2 border-gray-300 rounded-xl p-4 focus:outline-none focus:border-sky-500 min-h-[300px]"
+                placeholder="내용을 입력하세요"
+              />
+              <div className="flex gap-3 mb-6">
+                <button
+                  onClick={handleSaveEdit}
+                  className="px-6 py-2 bg-sky-500 text-white rounded-xl font-bold hover:bg-sky-600 transition-colors"
+                >
+                  저장
+                </button>
+                <button
+                  onClick={handleCancelEdit}
+                  className="px-6 py-2 bg-gray-300 text-gray-700 rounded-xl font-bold hover:bg-gray-400 transition-colors"
+                >
+                  취소
+                </button>
+              </div>
+            </>
+          ) : (
+            /* 일반 모드 */
+            <>
+              {/* 제목 */}
+              <h1 className="font-jua text-3xl md:text-4xl text-gray-800 mb-6 leading-tight">
+                {post.title}
+              </h1>
 
-          {/* 내용 */}
-          <div className="text-gray-700 leading-relaxed mb-8 whitespace-pre-wrap text-lg">
-            {post.content}
-          </div>
+              {/* 내용 */}
+              <div className="text-gray-700 leading-relaxed mb-8 whitespace-pre-wrap text-lg">
+                {post.content}
+              </div>
+            </>
+          )}
 
           {/* 통계 및 좋아요 */}
           <div className="flex items-center gap-6 pt-6 border-t border-gray-200">
@@ -198,7 +314,12 @@ export default function BoardDetail() {
           <h2 className="font-jua text-2xl text-gray-800 mb-4">
             💬 댓글 <span className="text-sky-500">{post.comments.length}</span>
           </h2>
-          <CommentList comments={post.comments} />
+          <CommentList
+            comments={post.comments}
+            currentUser={currentUser}
+            onDelete={handleDeleteComment}
+            onEdit={handleEditComment}
+          />
         </div>
 
         {/* 댓글 작성 폼 */}

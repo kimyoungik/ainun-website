@@ -61,6 +61,7 @@ class SupabaseBoardAPI {
       id: post.id,
       title: post.title,
       content: post.content,
+      userId: post.user_id,
       author: post.user.name,
       authorGrade: post.user.grade,
       authorAvatar: post.user.avatar,
@@ -71,6 +72,7 @@ class SupabaseBoardAPI {
         id: comment.id,
         postId: comment.post_id,
         content: comment.content,
+        userId: comment.user_id,
         author: comment.user.name,
         authorGrade: comment.user.grade,
         authorAvatar: comment.user.avatar,
@@ -168,6 +170,81 @@ class SupabaseBoardAPI {
 
     return !!data;
   }
+
+  async deletePost(postId) {
+    const { error } = await supabase
+      .from('posts')
+      .delete()
+      .eq('id', postId);
+
+    if (error) throw error;
+  }
+
+  async updatePost(postId, title, content) {
+    const { data, error } = await supabase
+      .from('posts')
+      .update({
+        title,
+        content,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', postId)
+      .select(`
+        *,
+        user:users(name, grade, avatar)
+      `)
+      .single();
+
+    if (error) throw error;
+
+    return {
+      id: data.id,
+      title: data.title,
+      content: data.content,
+      author: data.user.name,
+      authorGrade: data.user.grade,
+      authorAvatar: data.user.avatar,
+      createdAt: new Date(data.created_at),
+      viewCount: data.view_count,
+      likeCount: data.like_count,
+    };
+  }
+
+  async deleteComment(commentId) {
+    const { error } = await supabase
+      .from('comments')
+      .delete()
+      .eq('id', commentId);
+
+    if (error) throw error;
+  }
+
+  async updateComment(commentId, content) {
+    const { data, error } = await supabase
+      .from('comments')
+      .update({
+        content,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', commentId)
+      .select(`
+        *,
+        user:users(name, grade, avatar)
+      `)
+      .single();
+
+    if (error) throw error;
+
+    return {
+      id: data.id,
+      postId: data.post_id,
+      content: data.content,
+      author: data.user.name,
+      authorGrade: data.user.grade,
+      authorAvatar: data.user.avatar,
+      createdAt: new Date(data.created_at)
+    };
+  }
 }
 
 // 서비스 레이어 (추상화)
@@ -221,6 +298,31 @@ class BoardService {
   async checkIfLiked(postId, userId) {
     if (!userId) return false;
     return this.apiClient.checkIfLiked(postId, userId);
+  }
+
+  async deletePost(postId) {
+    return this.apiClient.deletePost(postId);
+  }
+
+  async updatePost(postId, title, content) {
+    if (!title || title.trim().length === 0) {
+      throw new Error('제목을 입력해주세요.');
+    }
+    if (!content || content.trim().length < 10) {
+      throw new Error('내용을 10자 이상 입력해주세요.');
+    }
+    return this.apiClient.updatePost(postId, title, content);
+  }
+
+  async deleteComment(commentId) {
+    return this.apiClient.deleteComment(commentId);
+  }
+
+  async updateComment(commentId, content) {
+    if (!content || content.trim().length === 0) {
+      throw new Error('댓글 내용을 입력해주세요.');
+    }
+    return this.apiClient.updateComment(commentId, content);
   }
 }
 

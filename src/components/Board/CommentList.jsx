@@ -25,7 +25,10 @@ function formatDate(date) {
   }
 }
 
-export default function CommentList({ comments }) {
+export default function CommentList({ comments, currentUser, onDelete, onEdit }) {
+  const [editingId, setEditingId] = React.useState(null);
+  const [editContent, setEditContent] = React.useState('');
+
   if (!comments || comments.length === 0) {
     return (
       <div className="text-center py-8 text-gray-400">
@@ -34,6 +37,22 @@ export default function CommentList({ comments }) {
       </div>
     );
   }
+
+  const handleEdit = (comment) => {
+    setEditingId(comment.id);
+    setEditContent(comment.content);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditContent('');
+  };
+
+  const handleSaveEdit = async (commentId) => {
+    await onEdit(commentId, editContent);
+    setEditingId(null);
+    setEditContent('');
+  };
 
   return (
     <div className="space-y-4">
@@ -45,11 +64,57 @@ export default function CommentList({ comments }) {
               <div className="font-medium text-gray-800">{comment.author}</div>
               <div className="text-sm text-gray-400">{comment.authorGrade}</div>
             </div>
-            <div className="text-sm text-gray-400">
-              {formatDate(comment.createdAt)}
+            <div className="flex items-center gap-2">
+              <div className="text-sm text-gray-400">
+                {formatDate(comment.createdAt)}
+              </div>
+              {/* 수정/삭제 버튼 (본인 댓글만) */}
+              {currentUser && currentUser.id === comment.userId && (
+                <div className="flex gap-2 ml-2">
+                  <button
+                    onClick={() => handleEdit(comment)}
+                    className="text-xs px-2 py-1 bg-sky-500 text-white rounded hover:bg-sky-600 transition-colors"
+                  >
+                    수정
+                  </button>
+                  <button
+                    onClick={() => onDelete(comment.id)}
+                    className="text-xs px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                  >
+                    삭제
+                  </button>
+                </div>
+              )}
             </div>
           </div>
-          <p className="text-gray-600 leading-relaxed whitespace-pre-wrap">{comment.content}</p>
+          {editingId === comment.id ? (
+            /* 수정 모드 */
+            <div>
+              <textarea
+                value={editContent}
+                onChange={(e) => setEditContent(e.target.value)}
+                className="w-full border-2 border-gray-300 rounded-lg p-3 mb-2 focus:outline-none focus:border-sky-500"
+                rows="3"
+              />
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleSaveEdit(comment.id)}
+                  className="px-4 py-1 bg-sky-500 text-white rounded-lg text-sm hover:bg-sky-600 transition-colors"
+                >
+                  저장
+                </button>
+                <button
+                  onClick={handleCancelEdit}
+                  className="px-4 py-1 bg-gray-300 text-gray-700 rounded-lg text-sm hover:bg-gray-400 transition-colors"
+                >
+                  취소
+                </button>
+              </div>
+            </div>
+          ) : (
+            /* 일반 모드 */
+            <p className="text-gray-600 leading-relaxed whitespace-pre-wrap">{comment.content}</p>
+          )}
         </div>
       ))}
     </div>
