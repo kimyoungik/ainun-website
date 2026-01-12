@@ -12,5 +12,5 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('VITE_SUPABASE_URL 및 VITE_SUPABASE_ANON_KEY 환경 변수를 설정해주세요.')
 }
 
-// Supabase 클라이언트 생성
+// Supabase 클라이언트 인스턴스 생성
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
