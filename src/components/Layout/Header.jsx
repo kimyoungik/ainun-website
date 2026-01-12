@@ -26,7 +26,7 @@ export default function Header() {
     { name: '회사소개', href: '/#about' },
     { name: '신문소개', href: '/#newspaper' },
     { name: '독자후기', href: '/board' },
-    { name: '구독하기', href: '/#subscribe' },
+    { name: '구독하기', href: '/subscribe' },
     { name: '고객센터', href: '/#support' },
   ];
 
