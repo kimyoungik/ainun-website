@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import Header from '../../components/Layout/Header';
 import Footer from '../../components/Layout/Footer';
@@ -7,6 +7,7 @@ import { paymentService } from '../../services/paymentService';
 
 export default function SubscribePage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { currentUser, userProfile } = useAuth();
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState('card');
@@ -19,6 +20,14 @@ export default function SubscribePage() {
   const [error, setError] = useState('');
 
   const plans = paymentService.getSubscriptionPlans();
+
+  // URL 파라미터에서 플랜 읽어오기
+  useEffect(() => {
+    const planParam = searchParams.get('plan');
+    if (planParam) {
+      setSelectedPlan(planParam);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (currentUser && userProfile) {
