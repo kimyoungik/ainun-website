@@ -10,7 +10,8 @@ class SupabaseBoardAPI {
       .from('posts')
       .select(`
         *,
-        user:users(name, grade, avatar)
+        user:users(name, grade, avatar),
+        comments(id)
       `, { count: 'exact' })
       .order('created_at', { ascending: false })
       .range(from, to);
@@ -28,7 +29,7 @@ class SupabaseBoardAPI {
         createdAt: new Date(post.created_at),
         viewCount: post.view_count,
         likeCount: post.like_count,
-        comments: []
+        comments: post.comments || []
       })),
       total: count,
       page,
