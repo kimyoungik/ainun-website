@@ -17,42 +17,64 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 초기 사용자 로드
-    authService.getCurrentUser()
-      .then(async (user) => {
-        setCurrentUser(user);
-        if (user) {
-          try {
-            const profile = await authService.getProfile(user.id);
-            setUserProfile(profile);
-          } catch (error) {
-            console.error('프로필 로딩 실패:', error);
-          }
-        }
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
-      });
+    let mounted = true;
+    let subscription = null;
 
-    // 인증 상태 변화 감지
-    const { data: { subscription } } = authService.onAuthStateChange(async (event, session) => {
-      if (session?.user) {
-        setCurrentUser(session.user);
-        try {
-          const profile = await authService.getProfile(session.user.id);
-          setUserProfile(profile);
-        } catch (error) {
-          console.error('프로필 로딩 실패:', error);
-          setUserProfile(null);
+    const initAuth = async () => {
+      try {
+        // 초기 사용자 로드
+        const user = await authService.getCurrentUser();
+        if (mounted) {
+          setCurrentUser(user);
+          if (user) {
+            try {
+              const profile = await authService.getProfile(user.id);
+              if (mounted) {
+                setUserProfile(profile);
+              }
+            } catch (error) {
+              console.error('프로필 로딩 실패:', error);
+            }
+          }
+          setLoading(false);
         }
-      } else {
-        setCurrentUser(null);
-        setUserProfile(null);
+
+        // 인증 상태 변화 감지
+        const { data } = authService.onAuthStateChange(async (_event, session) => {
+          if (!mounted) return;
+
+          if (session?.user) {
+            setCurrentUser(session.user);
+            try {
+              const profile = await authService.getProfile(session.user.id);
+              if (mounted) {
+                setUserProfile(profile);
+              }
+            } catch (error) {
+              console.error('프로필 로딩 실패:', error);
+              if (mounted) {
+                setUserProfile(null);
+              }
+            }
+          } else {
+            setCurrentUser(null);
+            setUserProfile(null);
+          }
+        });
+
+        subscription = data.subscription;
+      } catch (error) {
+        console.error('인증 초기화 실패:', error);
+        if (mounted) {
+          setLoading(false);
+        }
       }
-    });
+    };
+
+    initAuth();
 
     return () => {
+      mounted = false;
       subscription?.unsubscribe();
     };
   }, []);
