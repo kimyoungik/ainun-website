@@ -11,6 +11,9 @@ import AdminDashboard from './pages/Admin/AdminDashboard';
 import AdminPosts from './pages/Admin/AdminPosts';
 import AdminComments from './pages/Admin/AdminComments';
 import AdminUsers from './pages/Admin/AdminUsers';
+import SubscribePage from './pages/Subscribe/SubscribePage';
+import PaymentSuccess from './pages/Subscribe/PaymentSuccess';
+import PaymentFail from './pages/Subscribe/PaymentFail';
 import ProtectedRoute from './components/ProtectedRoute';
 
 export default function App() {
@@ -53,8 +56,17 @@ export default function App() {
               <AdminUsers />
             </ProtectedRoute>
           } />
+          {/* 구독 및 결제 페이지 */}
+          <Route path="/subscribe" element={
+            <ProtectedRoute>
+              <SubscribePage />
+            </ProtectedRoute>
+          } />
+          <Route path="/payment/success" element={<PaymentSuccess />} />
+          <Route path="/payment/fail" element={<PaymentFail />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
   );
 }
+
