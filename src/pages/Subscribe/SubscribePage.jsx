@@ -99,13 +99,15 @@ export default function SubscribePage() {
         .font-jua { font-family: 'Jua', sans-serif; }
         .plan-card {
           transition: all 0.3s ease;
+          border: 3px solid transparent;
         }
         .plan-card:hover {
           transform: translateY(-10px);
         }
         .plan-card.selected {
-          border-color: #0ea5e9;
-          box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+          border-color: #0ea5e9 !important;
+          background: linear-gradient(to bottom right, #f0f9ff, #e0f2fe) !important;
+          box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2), 0 10px 25px -5px rgba(14, 165, 233, 0.3);
         }
       `}</style>
 
@@ -128,10 +130,15 @@ export default function SubscribePage() {
               <div
                 key={plan.id}
                 onClick={() => setSelectedPlan(plan.id)}
-                className={`plan-card bg-white rounded-3xl shadow-lg p-6 cursor-pointer ${
+                className={`plan-card bg-white rounded-3xl shadow-lg p-6 cursor-pointer relative ${
                   selectedPlan === plan.id ? 'selected' : ''
                 } ${plan.popular ? 'ring-2 ring-amber-400' : ''}`}
               >
+                {selectedPlan === plan.id && (
+                  <div className="absolute top-3 right-3 bg-sky-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg">
+                    ✓
+                  </div>
+                )}
                 {plan.popular && (
                   <div className="bg-amber-400 text-white text-xs font-bold px-3 py-1 rounded-full inline-block mb-3">
                     🔥 인기
