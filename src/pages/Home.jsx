@@ -227,7 +227,7 @@ export default function Home() {
             <p className="text-gray-500 text-lg">첫 달 50% 할인 이벤트 진행 중!</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="card-hover bg-white p-8 rounded-3xl shadow-lg border border-gray-100">
               <div className="text-center">
                 <div className="text-gray-400 font-medium mb-2">1개월</div>
@@ -250,17 +250,17 @@ export default function Home() {
             <div className="card-hover bg-gradient-to-b from-sky-500 to-sky-600 p-8 rounded-3xl shadow-xl relative transform md:scale-105">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-400 text-white text-sm font-bold px-4 py-1 rounded-full">BEST 추천!</div>
               <div className="text-center">
-                <div className="text-sky-200 font-medium mb-2">6개월</div>
-                <div className="font-jua text-4xl text-white mb-1">75,000원</div>
-                <div className="text-sky-200 text-sm mb-6">월 12,500원 <span className="line-through opacity-60">15,000원</span></div>
+                <div className="text-sky-200 font-medium mb-2">3개월</div>
+                <div className="font-jua text-4xl text-white mb-1">40,000원</div>
+                <div className="text-sky-200 text-sm mb-6">월 13,333원 <span className="line-through opacity-60">45,000원</span></div>
                 <ul className="text-left space-y-3 mb-8">
-                  <li className="flex items-center gap-2 text-white"><span className="text-amber-300">✓</span> 주간 신문 24회 배송</li>
+                  <li className="flex items-center gap-2 text-white"><span className="text-amber-300">✓</span> 주간 신문 12회 배송</li>
                   <li className="flex items-center gap-2 text-white"><span className="text-amber-300">✓</span> NIE 학습자료 제공</li>
                   <li className="flex items-center gap-2 text-white"><span className="text-amber-300">✓</span> 디지털 신문 열람</li>
-                  <li className="flex items-center gap-2 text-white"><span className="text-amber-300">✓</span> 특별 사은품 증정</li>
+                  <li className="flex items-center gap-2 text-white"><span className="text-amber-300">✓</span> 5,000원 할인!</li>
                 </ul>
                 <button
-                  onClick={() => navigate('/subscribe?plan=6months')}
+                  onClick={() => navigate('/subscribe?plan=3months')}
                   className="w-full py-3 rounded-xl bg-white text-sky-600 font-bold hover:bg-sky-50 transition-all hover:scale-105 cursor-pointer shadow-lg"
                 >
                   구독하기 →
@@ -270,14 +270,34 @@ export default function Home() {
 
             <div className="card-hover bg-white p-8 rounded-3xl shadow-lg border border-gray-100">
               <div className="text-center">
+                <div className="text-gray-400 font-medium mb-2">6개월</div>
+                <div className="font-jua text-4xl text-gray-800 mb-1">75,000원</div>
+                <div className="text-gray-400 text-sm mb-6">월 12,500원 <span className="line-through opacity-60">90,000원</span></div>
+                <ul className="text-left space-y-3 mb-8">
+                  <li className="flex items-center gap-2 text-gray-600"><span className="text-green-500">✓</span> 주간 신문 24회 배송</li>
+                  <li className="flex items-center gap-2 text-gray-600"><span className="text-green-500">✓</span> NIE 학습자료 제공</li>
+                  <li className="flex items-center gap-2 text-gray-600"><span className="text-green-500">✓</span> 디지털 신문 열람</li>
+                  <li className="flex items-center gap-2 text-gray-600"><span className="text-green-500">✓</span> 15,000원 할인!</li>
+                </ul>
+                <button
+                  onClick={() => navigate('/subscribe?plan=6months')}
+                  className="w-full py-3 rounded-xl border-2 border-sky-400 text-sky-500 font-bold hover:bg-sky-50 transition-all hover:scale-105 cursor-pointer"
+                >
+                  선택하기
+                </button>
+              </div>
+            </div>
+
+            <div className="card-hover bg-white p-8 rounded-3xl shadow-lg border border-gray-100">
+              <div className="text-center">
                 <div className="text-gray-400 font-medium mb-2">12개월</div>
                 <div className="font-jua text-4xl text-gray-800 mb-1">140,000원</div>
-                <div className="text-gray-400 text-sm mb-6">월 11,667원 <span className="line-through opacity-60">15,000원</span></div>
+                <div className="text-gray-400 text-sm mb-6">월 11,667원 <span className="line-through opacity-60">180,000원</span></div>
                 <ul className="text-left space-y-3 mb-8">
                   <li className="flex items-center gap-2 text-gray-600"><span className="text-green-500">✓</span> 주간 신문 48회 배송</li>
                   <li className="flex items-center gap-2 text-gray-600"><span className="text-green-500">✓</span> NIE 학습자료 제공</li>
                   <li className="flex items-center gap-2 text-gray-600"><span className="text-green-500">✓</span> 디지털 신문 열람</li>
-                  <li className="flex items-center gap-2 text-gray-600"><span className="text-green-500">✓</span> 프리미엄 사은품</li>
+                  <li className="flex items-center gap-2 text-gray-600"><span className="text-green-500">✓</span> 40,000원 할인!</li>
                 </ul>
                 <button
                   onClick={() => navigate('/subscribe?plan=12months')}
