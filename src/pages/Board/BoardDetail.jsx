@@ -66,8 +66,12 @@ export default function BoardDetail() {
     try {
       const result = await boardService.toggleLike(id, currentUser.id);
       setIsLiked(result.liked);
-      // 게시글 다시 로드하여 좋아요 수 업데이트
-      await loadPost();
+
+      // 좋아요 수만 업데이트 (화면 새로고침 없이)
+      setPost(prevPost => ({
+        ...prevPost,
+        likeCount: result.liked ? prevPost.likeCount + 1 : prevPost.likeCount - 1
+      }));
     } catch (err) {
       alert(err.message || '좋아요에 실패했습니다.');
     } finally {
