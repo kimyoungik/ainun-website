@@ -49,7 +49,10 @@ class AuthService {
   // 현재 사용자 가져오기
   async getCurrentUser() {
     const { data, error } = await supabase.auth.getUser()
-    if (error) throw error
+    // 세션이 없는 경우는 정상 상황이므로 null 반환
+    if (error && error.message !== 'Auth session missing!') {
+      throw error
+    }
     return data.user
   }
 
