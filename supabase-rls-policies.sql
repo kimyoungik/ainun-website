@@ -114,14 +114,34 @@ CREATE POLICY "Users can delete own likes" ON likes
 -- Users 테이블 RLS 정책 (추가 확인)
 -- ============================================
 
--- 모든 사용자(로그인 불필요)가 다른 사용자 프로필 조회 가능
+-- 기존 정책 삭제
 DROP POLICY IF EXISTS "Users can view their own profile" ON users;
 DROP POLICY IF EXISTS "Users can view profiles" ON users;
 DROP POLICY IF EXISTS "Enable read access for all users" ON users;
 DROP POLICY IF EXISTS "Authenticated users can view all profiles" ON users;
-CREATE POLICY "Anyone can view all profiles" ON users
+DROP POLICY IF EXISTS "Anyone can view all profiles" ON users;
+DROP POLICY IF EXISTS "Users can view own profile" ON users;
+DROP POLICY IF EXISTS "Public profiles are viewable by everyone" ON users;
+
+-- 본인만 자신의 전체 프로필 조회 가능
+CREATE POLICY "Users can view own full profile" ON users
   FOR SELECT
-  USING (true);
+  TO authenticated
+  USING (auth.uid() = id);
+
+-- 공개 프로필 뷰 생성 (이름, 학년, 아바타만)
+CREATE OR REPLACE VIEW public_profiles AS
+SELECT
+  id,
+  name,
+  grade,
+  avatar,
+  created_at,
+  updated_at
+FROM users;
+
+-- 뷰에 대한 SELECT 권한 부여
+GRANT SELECT ON public_profiles TO anon, authenticated;
 
 -- 본인 프로필만 수정 가능
 DROP POLICY IF EXISTS "Users can update their own profile" ON users;

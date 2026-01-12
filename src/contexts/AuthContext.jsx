@@ -22,24 +22,27 @@ export function AuthProvider({ children }) {
 
     const initAuth = async () => {
       try {
-        // 초기 사용자 로드
         const user = await authService.getCurrentUser();
-        if (mounted) {
-          setCurrentUser(user);
-          if (user) {
-            try {
-              const profile = await authService.getProfile(user.id);
-              if (mounted) {
-                setUserProfile(profile);
-              }
-            } catch (error) {
-              console.error('프로필 로딩 실패:', error);
+        if (!mounted) return;
+
+        setCurrentUser(user);
+        if (user) {
+          try {
+            const profile = await authService.getProfile(user.id);
+            if (mounted) {
+              setUserProfile(profile || null);
+            }
+          } catch (error) {
+            console.error('Failed to load profile:', error);
+            if (mounted) {
+              setUserProfile(null);
             }
           }
+        }
+        if (mounted) {
           setLoading(false);
         }
 
-        // 인증 상태 변화 감지
         const { data } = authService.onAuthStateChange(async (_event, session) => {
           if (!mounted) return;
 
@@ -48,10 +51,10 @@ export function AuthProvider({ children }) {
             try {
               const profile = await authService.getProfile(session.user.id);
               if (mounted) {
-                setUserProfile(profile);
+                setUserProfile(profile || null);
               }
             } catch (error) {
-              console.error('프로필 로딩 실패:', error);
+              console.error('Failed to load profile:', error);
               if (mounted) {
                 setUserProfile(null);
               }
@@ -64,7 +67,7 @@ export function AuthProvider({ children }) {
 
         subscription = data.subscription;
       } catch (error) {
-        console.error('인증 초기화 실패:', error);
+        console.error('Auth initialization failed:', error);
         if (mounted) {
           setLoading(false);
         }
@@ -79,57 +82,53 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
-  // 회원가입
   const register = async (email, password, confirmPassword, profileData) => {
     if (password !== confirmPassword) {
-      throw new Error('비밀번호가 일치하지 않습니다.');
+      throw new Error('Passwords do not match.');
     }
 
     if (password.length < 6) {
-      throw new Error('비밀번호는 6자 이상이어야 합니다.');
+      throw new Error('Password must be at least 6 characters.');
     }
 
     if (!profileData.name || profileData.name.trim().length < 2) {
-      throw new Error('이름을 2자 이상 입력해주세요.');
+      throw new Error('Name must be at least 2 characters.');
     }
 
     if (!profileData.grade) {
-      throw new Error('학년을 선택해주세요.');
+      throw new Error('Grade is required.');
     }
 
     if (!profileData.avatar) {
-      throw new Error('아바타를 선택해주세요.');
+      throw new Error('Avatar is required.');
     }
 
     const user = await authService.signUp(email, password, profileData);
     const profile = await authService.getProfile(user.id);
-    setUserProfile(profile);
+    setUserProfile(profile || null);
     return user;
   };
 
-  // 로그인
   const login = async (email, password) => {
     if (!email || !password) {
-      throw new Error('이메일과 비밀번호를 입력해주세요.');
+      throw new Error('Email and password are required.');
     }
 
     const user = await authService.signIn(email, password);
     const profile = await authService.getProfile(user.id);
-    setUserProfile(profile);
+    setUserProfile(profile || null);
     return user;
   };
 
-  // 로그아웃
   const logout = async () => {
     await authService.signOut();
     setCurrentUser(null);
     setUserProfile(null);
   };
 
-  // 프로필 업데이트
   const updateProfile = async (profileData) => {
     if (!currentUser) {
-      throw new Error('로그인이 필요합니다.');
+      throw new Error('Login required.');
     }
 
     const updatedProfile = await authService.updateProfile(currentUser.id, profileData);

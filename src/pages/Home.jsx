@@ -2,17 +2,56 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Layout/Header';
 import Footer from '../components/Layout/Footer';
+import { boardService } from '../services/boardService';
 
 export default function Home() {
   const navigate = useNavigate();
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  const testimonials = [
+  const fallbackTestimonials = [
     { name: "김지유 (초등 3학년)", text: "매주 아이눈 신문이 오는 날이 제일 기다려져요! 어려운 뉴스도 쉽게 알려줘서 좋아요.", avatar: "🧒" },
     { name: "이준서 (초등 5학년)", text: "친구들한테 뉴스 이야기해주면 다들 신기해해요. 아이눈 덕분이에요!", avatar: "👦" },
     { name: "박소율 (초등 2학년)", text: "그림이랑 만화가 많아서 재밌어요. 엄마아빠랑 같이 읽어요!", avatar: "👧" },
   ];
+
+  const [testimonials, setTestimonials] = useState(fallbackTestimonials);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadTestimonials = async () => {
+      try {
+        const data = await boardService.getPosts(1, 3);
+        const items = (data?.posts || []).slice(0, 3).map((post) => {
+          const content = post?.content || '';
+          const preview = content.length > 120 ? `${content.slice(0, 120)}...` : content;
+          return {
+            name: `${post.author} (${post.authorGrade})`,
+            text: preview,
+            avatar: post.authorAvatar,
+          };
+        });
+
+        if (mounted) {
+          setTestimonials(items.length ? items : fallbackTestimonials);
+          setActiveTestimonial(0);
+        }
+      } catch (error) {
+        console.error('Failed to load testimonials:', error);
+        if (mounted) {
+          setTestimonials(fallbackTestimonials);
+          setActiveTestimonial(0);
+        }
+      }
+    };
+
+    loadTestimonials();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   // 자동 슬라이드 효과
   useEffect(() => {

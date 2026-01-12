@@ -7,6 +7,10 @@ import BoardWrite from './pages/Board/BoardWrite';
 import BoardDetail from './pages/Board/BoardDetail';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
+import AdminDashboard from './pages/Admin/AdminDashboard';
+import AdminPosts from './pages/Admin/AdminPosts';
+import AdminComments from './pages/Admin/AdminComments';
+import AdminUsers from './pages/Admin/AdminUsers';
 import ProtectedRoute from './components/ProtectedRoute';
 
 export default function App() {
@@ -26,6 +30,27 @@ export default function App() {
           <Route path="/board/:id" element={
             <ProtectedRoute>
               <BoardDetail />
+            </ProtectedRoute>
+          } />
+          {/* 관리자 페이지 */}
+          <Route path="/admin" element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/posts" element={
+            <ProtectedRoute>
+              <AdminPosts />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/comments" element={
+            <ProtectedRoute>
+              <AdminComments />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/users" element={
+            <ProtectedRoute>
+              <AdminUsers />
             </ProtectedRoute>
           } />
         </Routes>

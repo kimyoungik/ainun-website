@@ -1,17 +1,15 @@
 import { supabase } from '../lib/supabase'
 
 class AuthService {
-  // 회원가입
   async signUp(email, password, profileData) {
-    // 1. Auth 계정 생성
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
     })
 
     if (error) throw error
+    if (!data?.user) throw new Error('Sign up failed.')
 
-    // 2. 프로필 정보 users 테이블에 저장
     const { error: profileError } = await supabase
       .from('users')
       .insert({
@@ -29,7 +27,6 @@ class AuthService {
     return data.user
   }
 
-  // 로그인
   async signIn(email, password) {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -40,37 +37,32 @@ class AuthService {
     return data.user
   }
 
-  // 로그아웃
   async signOut() {
     const { error } = await supabase.auth.signOut()
     if (error) throw error
   }
 
-  // 현재 사용자 가져오기
   async getCurrentUser() {
     const { data, error } = await supabase.auth.getUser()
-    // 세션이 없는 경우는 정상 상황이므로 null 반환
     if (error && error.message !== 'Auth session missing!') {
       throw error
     }
     return data.user
   }
 
-  // 프로필 조회
   async getProfile(userId) {
     const { data, error } = await supabase
       .from('users')
       .select('*')
       .eq('id', userId)
-      .single()
+      .maybeSingle()
 
     if (error) throw error
     return data
   }
 
-  // 프로필 업데이트
   async updateProfile(userId, profileData) {
-    const { data, error} = await supabase
+    const { data, error } = await supabase
       .from('users')
       .update({
         ...profileData,
@@ -84,7 +76,6 @@ class AuthService {
     return data
   }
 
-  // 인증 상태 변화 리스너
   onAuthStateChange(callback) {
     return supabase.auth.onAuthStateChange(callback)
   }

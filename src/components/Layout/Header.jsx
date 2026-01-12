@@ -1,11 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { adminService } from '../../services/adminService';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
   const { currentUser, userProfile, logout } = useAuth();
+
+  useEffect(() => {
+    checkAdmin();
+  }, [currentUser]);
+
+  const checkAdmin = async () => {
+    if (currentUser) {
+      const adminStatus = await adminService.isAdmin(currentUser.id);
+      setIsAdmin(adminStatus);
+    } else {
+      setIsAdmin(false);
+    }
+  };
 
   const menuItems = [
     { name: '회사소개', href: '/#about' },
@@ -49,6 +64,14 @@ export default function Header() {
 
             {currentUser ? (
               <div className="flex items-center gap-3">
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    className="flex items-center gap-1 bg-amber-100 text-amber-700 px-4 py-2 rounded-full font-bold hover:bg-amber-200 transition-colors"
+                  >
+                    🛡️ 관리자
+                  </Link>
+                )}
                 <div className="flex items-center gap-2">
                   <span className="text-2xl">{userProfile?.avatar}</span>
                   <span className="font-medium text-gray-700">{userProfile?.name}님</span>
@@ -110,6 +133,15 @@ export default function Header() {
                     <span className="text-2xl">{userProfile?.avatar}</span>
                     <span className="font-medium text-gray-700">{userProfile?.name}님</span>
                   </div>
+                  {isAdmin && (
+                    <Link
+                      to="/admin"
+                      className="flex items-center justify-center gap-1 bg-amber-100 text-amber-700 px-4 py-3 rounded-full font-bold hover:bg-amber-200 transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      🛡️ 관리자 페이지
+                    </Link>
+                  )}
                   <button
                     onClick={() => {
                       handleLogout();
