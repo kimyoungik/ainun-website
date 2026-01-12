@@ -1,23 +1,19 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import Header from '../../components/Layout/Header';
 import Footer from '../../components/Layout/Footer';
 import { boardService } from '../../services/boardService';
 
 export default function BoardWrite() {
   const navigate = useNavigate();
+  const { currentUser, userProfile } = useAuth();
   const [formData, setFormData] = useState({
     title: '',
-    content: '',
-    author: '',
-    authorGrade: '',
-    authorAvatar: ''
+    content: ''
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const grades = ['초등 1학년', '초등 2학년', '초등 3학년', '초등 4학년', '초등 5학년', '초등 6학년'];
-  const avatars = ['👦', '👧', '🧒', '👶'];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,13 +21,6 @@ export default function BoardWrite() {
     // 입력 시 에러 제거
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
-    }
-  };
-
-  const handleAvatarSelect = (avatar) => {
-    setFormData(prev => ({ ...prev, authorAvatar: avatar }));
-    if (errors.authorAvatar) {
-      setErrors(prev => ({ ...prev, authorAvatar: '' }));
     }
   };
 
@@ -50,20 +39,6 @@ export default function BoardWrite() {
       newErrors.content = '내용을 10자 이상 입력해주세요.';
     }
 
-    if (!formData.author.trim()) {
-      newErrors.author = '이름을 입력해주세요.';
-    } else if (formData.author.trim().length < 2) {
-      newErrors.author = '이름을 2자 이상 입력해주세요.';
-    }
-
-    if (!formData.authorGrade) {
-      newErrors.authorGrade = '학년을 선택해주세요.';
-    }
-
-    if (!formData.authorAvatar) {
-      newErrors.authorAvatar = '아바타를 선택해주세요.';
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -78,7 +53,7 @@ export default function BoardWrite() {
     setIsSubmitting(true);
 
     try {
-      await boardService.createPost(formData);
+      await boardService.createPost(formData.title, formData.content, currentUser.id);
       alert('게시글이 작성되었습니다!');
       navigate('/board');
     } catch (error) {
@@ -138,65 +113,16 @@ export default function BoardWrite() {
             {errors.content && <p className="text-red-500 text-sm mt-1">{errors.content}</p>}
           </div>
 
-          {/* 작성자 정보 */}
-          <div className="grid md:grid-cols-2 gap-6 mb-6">
-            {/* 이름 */}
-            <div>
-              <label className="block text-gray-700 font-bold mb-2">이름</label>
-              <input
-                type="text"
-                name="author"
-                value={formData.author}
-                onChange={handleChange}
-                placeholder="이름을 입력하세요"
-                className={`w-full px-4 py-3 rounded-xl border-2 transition-colors ${
-                  errors.author ? 'border-red-400' : 'border-gray-200 focus:border-sky-400'
-                } outline-none`}
-                maxLength={20}
-              />
-              {errors.author && <p className="text-red-500 text-sm mt-1">{errors.author}</p>}
+          {/* 작성자 정보 표시 */}
+          <div className="mb-8 p-4 bg-sky-50 rounded-xl border-2 border-sky-200">
+            <p className="text-sm text-gray-600 mb-2">작성자 정보</p>
+            <div className="flex items-center gap-3">
+              <span className="text-3xl">{userProfile?.avatar}</span>
+              <div>
+                <p className="font-bold text-gray-800">{userProfile?.name}</p>
+                <p className="text-sm text-gray-600">{userProfile?.grade}</p>
+              </div>
             </div>
-
-            {/* 학년 */}
-            <div>
-              <label className="block text-gray-700 font-bold mb-2">학년</label>
-              <select
-                name="authorGrade"
-                value={formData.authorGrade}
-                onChange={handleChange}
-                className={`w-full px-4 py-3 rounded-xl border-2 transition-colors ${
-                  errors.authorGrade ? 'border-red-400' : 'border-gray-200 focus:border-sky-400'
-                } outline-none`}
-              >
-                <option value="">학년을 선택하세요</option>
-                {grades.map(grade => (
-                  <option key={grade} value={grade}>{grade}</option>
-                ))}
-              </select>
-              {errors.authorGrade && <p className="text-red-500 text-sm mt-1">{errors.authorGrade}</p>}
-            </div>
-          </div>
-
-          {/* 아바타 선택 */}
-          <div className="mb-8">
-            <label className="block text-gray-700 font-bold mb-2">아바타 선택</label>
-            <div className="flex gap-3">
-              {avatars.map(avatar => (
-                <button
-                  key={avatar}
-                  type="button"
-                  onClick={() => handleAvatarSelect(avatar)}
-                  className={`text-4xl p-4 rounded-xl border-2 transition-all ${
-                    formData.authorAvatar === avatar
-                      ? 'border-sky-500 bg-sky-50 scale-110'
-                      : 'border-gray-200 hover:border-sky-300 hover:bg-gray-50'
-                  }`}
-                >
-                  {avatar}
-                </button>
-              ))}
-            </div>
-            {errors.authorAvatar && <p className="text-red-500 text-sm mt-1">{errors.authorAvatar}</p>}
           </div>
 
           {/* 버튼 */}

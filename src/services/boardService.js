@@ -1,111 +1,171 @@
-import { mockPosts } from '../data/mockBoardData';
+import { supabase } from '../lib/supabase';
 
-// Mock API 구현 (메모리 내 데이터)
-class MockBoardAPI {
-  constructor() {
-    this.posts = [...mockPosts];
-    this.nextId = this.posts.length + 1;
-  }
-
+// Supabase API 구현
+class SupabaseBoardAPI {
   async getPosts(page = 1, limit = 10) {
-    // 최신순 정렬
-    const sortedPosts = [...this.posts].sort((a, b) => b.createdAt - a.createdAt);
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
 
-    // 페이징 처리
-    const start = (page - 1) * limit;
-    const end = start + limit;
-    const paginatedPosts = sortedPosts.slice(start, end);
+    const { data, error, count } = await supabase
+      .from('posts')
+      .select(`
+        *,
+        user:users(name, grade, avatar)
+      `, { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .range(from, to);
 
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          posts: paginatedPosts,
-          total: this.posts.length,
-          page,
-          limit,
-          totalPages: Math.ceil(this.posts.length / limit)
-        });
-      }, 300); // 실제 API 호출처럼 약간의 지연
-    });
+    if (error) throw error;
+
+    return {
+      posts: data.map(post => ({
+        id: post.id,
+        title: post.title,
+        content: post.content,
+        author: post.user.name,
+        authorGrade: post.user.grade,
+        authorAvatar: post.user.avatar,
+        createdAt: new Date(post.created_at),
+        viewCount: post.view_count,
+        likeCount: post.like_count,
+        comments: []
+      })),
+      total: count,
+      page,
+      limit,
+      totalPages: Math.ceil(count / limit)
+    };
   }
 
   async getPostById(id) {
-    const post = this.posts.find(p => p.id === parseInt(id));
+    const { data: post, error } = await supabase
+      .from('posts')
+      .select(`
+        *,
+        user:users(name, grade, avatar),
+        comments(
+          *,
+          user:users(name, grade, avatar)
+        )
+      `)
+      .eq('id', id)
+      .single();
 
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (post) {
-          // 조회수 증가
-          post.viewCount += 1;
-          resolve(post);
-        } else {
-          reject(new Error('게시글을 찾을 수 없습니다.'));
-        }
-      }, 200);
-    });
+    if (error) throw new Error('게시글을 찾을 수 없습니다.');
+
+    // 조회수 증가
+    await supabase.rpc('increment_view_count', { post_id: id });
+
+    return {
+      id: post.id,
+      title: post.title,
+      content: post.content,
+      author: post.user.name,
+      authorGrade: post.user.grade,
+      authorAvatar: post.user.avatar,
+      createdAt: new Date(post.created_at),
+      viewCount: post.view_count + 1,
+      likeCount: post.like_count,
+      comments: post.comments.map(comment => ({
+        id: comment.id,
+        postId: comment.post_id,
+        content: comment.content,
+        author: comment.user.name,
+        authorGrade: comment.user.grade,
+        authorAvatar: comment.user.avatar,
+        createdAt: new Date(comment.created_at)
+      }))
+    };
   }
 
-  async createPost(data) {
-    const newPost = {
-      id: this.nextId++,
+  async createPost(title, content, userId) {
+    const { data, error } = await supabase
+      .from('posts')
+      .insert({
+        title,
+        content,
+        user_id: userId
+      })
+      .select(`
+        *,
+        user:users(name, grade, avatar)
+      `)
+      .single();
+
+    if (error) throw error;
+
+    return {
+      id: data.id,
       title: data.title,
       content: data.content,
-      author: data.author,
-      authorGrade: data.authorGrade,
-      authorAvatar: data.authorAvatar,
-      createdAt: new Date(),
+      author: data.user.name,
+      authorGrade: data.user.grade,
+      authorAvatar: data.user.avatar,
+      createdAt: new Date(data.created_at),
       viewCount: 0,
       likeCount: 0,
       comments: []
     };
-
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        this.posts.unshift(newPost); // 최상단에 추가
-        resolve(newPost);
-      }, 300);
-    });
   }
 
-  async createComment(postId, data) {
-    const post = this.posts.find(p => p.id === parseInt(postId));
+  async createComment(postId, content, userId) {
+    const { data, error } = await supabase
+      .from('comments')
+      .insert({
+        post_id: postId,
+        content,
+        user_id: userId
+      })
+      .select(`
+        *,
+        user:users(name, grade, avatar)
+      `)
+      .single();
 
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (!post) {
-          reject(new Error('게시글을 찾을 수 없습니다.'));
-          return;
-        }
+    if (error) throw error;
 
-        const newComment = {
-          id: post.comments.length + 1,
-          postId: post.id,
-          content: data.content,
-          author: data.author,
-          authorGrade: data.authorGrade,
-          authorAvatar: data.authorAvatar,
-          createdAt: new Date()
-        };
-
-        post.comments.push(newComment);
-        resolve(newComment);
-      }, 200);
-    });
+    return {
+      id: data.id,
+      postId: data.post_id,
+      content: data.content,
+      author: data.user.name,
+      authorGrade: data.user.grade,
+      authorAvatar: data.user.avatar,
+      createdAt: new Date(data.created_at)
+    };
   }
 
-  async likePost(id) {
-    const post = this.posts.find(p => p.id === parseInt(id));
+  async toggleLike(postId, userId) {
+    // 이미 좋아요 했는지 확인
+    const { data: existingLike } = await supabase
+      .from('likes')
+      .select('id')
+      .eq('post_id', postId)
+      .eq('user_id', userId)
+      .single();
 
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (post) {
-          post.likeCount += 1;
-          resolve(post);
-        } else {
-          reject(new Error('게시글을 찾을 수 없습니다.'));
-        }
-      }, 150);
-    });
+    if (existingLike) {
+      // 좋아요 취소
+      await supabase.from('likes').delete().eq('id', existingLike.id);
+      await supabase.rpc('decrement_like_count', { post_id: postId });
+      return { liked: false };
+    } else {
+      // 좋아요 추가
+      await supabase.from('likes').insert({ post_id: postId, user_id: userId });
+      await supabase.rpc('increment_like_count', { post_id: postId });
+      return { liked: true };
+    }
+  }
+
+  async checkIfLiked(postId, userId) {
+    const { data } = await supabase
+      .from('likes')
+      .select('id')
+      .eq('post_id', postId)
+      .eq('user_id', userId)
+      .single();
+
+    return !!data;
   }
 }
 
@@ -123,49 +183,45 @@ class BoardService {
     return this.apiClient.getPostById(id);
   }
 
-  async createPost(data) {
+  async createPost(title, content, userId) {
     // 유효성 검증
-    if (!data.title || data.title.trim().length === 0) {
+    if (!title || title.trim().length === 0) {
       throw new Error('제목을 입력해주세요.');
     }
-    if (!data.content || data.content.trim().length < 10) {
+    if (!content || content.trim().length < 10) {
       throw new Error('내용을 10자 이상 입력해주세요.');
     }
-    if (!data.author || data.author.trim().length < 2) {
-      throw new Error('이름을 2자 이상 입력해주세요.');
-    }
-    if (!data.authorGrade) {
-      throw new Error('학년을 선택해주세요.');
-    }
-    if (!data.authorAvatar) {
-      throw new Error('아바타를 선택해주세요.');
+    if (!userId) {
+      throw new Error('로그인이 필요합니다.');
     }
 
-    return this.apiClient.createPost(data);
+    return this.apiClient.createPost(title, content, userId);
   }
 
-  async createComment(postId, data) {
+  async createComment(postId, content, userId) {
     // 유효성 검증
-    if (!data.content || data.content.trim().length === 0) {
+    if (!content || content.trim().length === 0) {
       throw new Error('댓글 내용을 입력해주세요.');
     }
-    if (!data.author || data.author.trim().length < 2) {
-      throw new Error('이름을 2자 이상 입력해주세요.');
-    }
-    if (!data.authorGrade) {
-      throw new Error('학년을 선택해주세요.');
-    }
-    if (!data.authorAvatar) {
-      throw new Error('아바타를 선택해주세요.');
+    if (!userId) {
+      throw new Error('로그인이 필요합니다.');
     }
 
-    return this.apiClient.createComment(postId, data);
+    return this.apiClient.createComment(postId, content, userId);
   }
 
-  async likePost(id) {
-    return this.apiClient.likePost(id);
+  async toggleLike(postId, userId) {
+    if (!userId) {
+      throw new Error('로그인이 필요합니다.');
+    }
+    return this.apiClient.toggleLike(postId, userId);
+  }
+
+  async checkIfLiked(postId, userId) {
+    if (!userId) return false;
+    return this.apiClient.checkIfLiked(postId, userId);
   }
 }
 
-// Export: 현재는 Mock API 사용, 나중에 RestBoardAPI로 쉽게 교체 가능
-export const boardService = new BoardService(new MockBoardAPI());
+// Export: Supabase API 사용
+export const boardService = new BoardService(new SupabaseBoardAPI());

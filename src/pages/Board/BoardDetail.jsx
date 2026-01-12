@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import Header from '../../components/Layout/Header';
 import Footer from '../../components/Layout/Footer';
 import CommentList from '../../components/Board/CommentList';
@@ -19,14 +20,22 @@ function formatDate(date) {
 export default function BoardDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isLiking, setIsLiking] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
     loadPost();
   }, [id]);
+
+  useEffect(() => {
+    if (currentUser && post) {
+      checkIfLiked();
+    }
+  }, [currentUser, post?.id]);
 
   const loadPost = async () => {
     setLoading(true);
@@ -41,23 +50,34 @@ export default function BoardDetail() {
     }
   };
 
+  const checkIfLiked = async () => {
+    try {
+      const liked = await boardService.checkIfLiked(id, currentUser.id);
+      setIsLiked(liked);
+    } catch (err) {
+      console.error('좋아요 상태 확인 실패:', err);
+    }
+  };
+
   const handleLike = async () => {
-    if (isLiking) return;
+    if (isLiking || !currentUser) return;
 
     setIsLiking(true);
     try {
-      const updatedPost = await boardService.likePost(id);
-      setPost(updatedPost);
+      const result = await boardService.toggleLike(id, currentUser.id);
+      setIsLiked(result.liked);
+      // 게시글 다시 로드하여 좋아요 수 업데이트
+      await loadPost();
     } catch (err) {
-      alert('좋아요에 실패했습니다.');
+      alert(err.message || '좋아요에 실패했습니다.');
     } finally {
       setIsLiking(false);
     }
   };
 
-  const handleCommentAdded = async (commentData) => {
+  const handleCommentAdded = async (content) => {
     try {
-      await boardService.createComment(id, commentData);
+      await boardService.createComment(id, content, currentUser.id);
       // 게시글 다시 로드 (댓글 포함)
       await loadPost();
       alert('댓글이 작성되었습니다!');
@@ -159,10 +179,12 @@ export default function BoardDetail() {
               className={`ml-auto flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${
                 isLiking
                   ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : isLiked
+                  ? 'bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-lg hover:shadow-xl hover:scale-105'
                   : 'bg-gradient-to-r from-pink-400 to-red-400 text-white shadow-lg hover:shadow-xl hover:scale-105'
               }`}
             >
-              ❤️ 좋아요 {post.likeCount}
+              {isLiked ? '❤️' : '🤍'} 좋아요 {post.likeCount}
             </button>
           </div>
         </div>
@@ -176,7 +198,7 @@ export default function BoardDetail() {
         </div>
 
         {/* 댓글 작성 폼 */}
-        <CommentForm postId={post.id} onCommentAdded={handleCommentAdded} />
+        <CommentForm onCommentAdded={handleCommentAdded} />
       </div>
 
       <Footer />

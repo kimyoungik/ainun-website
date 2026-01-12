@@ -1,56 +1,25 @@
 import React, { useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
 
-export default function CommentForm({ postId, onCommentAdded }) {
-  const [formData, setFormData] = useState({
-    content: '',
-    author: '',
-    authorGrade: '',
-    authorAvatar: ''
-  });
-  const [errors, setErrors] = useState({});
+export default function CommentForm({ onCommentAdded }) {
+  const { userProfile } = useAuth();
+  const [content, setContent] = useState('');
+  const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const grades = ['초등 1학년', '초등 2학년', '초등 3학년', '초등 4학년', '초등 5학년', '초등 6학년'];
-  const avatars = ['👦', '👧', '🧒', '👶'];
-
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
-    }
-  };
-
-  const handleAvatarSelect = (avatar) => {
-    setFormData(prev => ({ ...prev, authorAvatar: avatar }));
-    if (errors.authorAvatar) {
-      setErrors(prev => ({ ...prev, authorAvatar: '' }));
+    setContent(e.target.value);
+    if (error) {
+      setError('');
     }
   };
 
   const validate = () => {
-    const newErrors = {};
-
-    if (!formData.content.trim()) {
-      newErrors.content = '댓글 내용을 입력해주세요.';
+    if (!content.trim()) {
+      setError('댓글 내용을 입력해주세요.');
+      return false;
     }
-
-    if (!formData.author.trim()) {
-      newErrors.author = '이름을 입력해주세요.';
-    } else if (formData.author.trim().length < 2) {
-      newErrors.author = '이름을 2자 이상 입력해주세요.';
-    }
-
-    if (!formData.authorGrade) {
-      newErrors.authorGrade = '학년을 선택해주세요.';
-    }
-
-    if (!formData.authorAvatar) {
-      newErrors.authorAvatar = '아바타를 선택해주세요.';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return true;
   };
 
   const handleSubmit = async (e) => {
@@ -63,15 +32,10 @@ export default function CommentForm({ postId, onCommentAdded }) {
     setIsSubmitting(true);
 
     try {
-      await onCommentAdded(formData);
+      await onCommentAdded(content);
       // 폼 초기화
-      setFormData({
-        content: '',
-        author: '',
-        authorGrade: '',
-        authorAvatar: ''
-      });
-      setErrors({});
+      setContent('');
+      setError('');
     } catch (error) {
       alert(error.message || '댓글 작성에 실패했습니다.');
     } finally {
@@ -83,75 +47,30 @@ export default function CommentForm({ postId, onCommentAdded }) {
     <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
       <h3 className="font-jua text-xl text-gray-800 mb-4">💬 댓글 작성</h3>
 
+      {/* 작성자 정보 표시 */}
+      <div className="mb-4 p-3 bg-sky-50 rounded-xl border-2 border-sky-200">
+        <div className="flex items-center gap-2">
+          <span className="text-2xl">{userProfile?.avatar}</span>
+          <div>
+            <p className="font-bold text-gray-800 text-sm">{userProfile?.name}</p>
+            <p className="text-xs text-gray-600">{userProfile?.grade}</p>
+          </div>
+        </div>
+      </div>
+
       {/* 댓글 내용 */}
       <div className="mb-4">
         <textarea
           name="content"
-          value={formData.content}
+          value={content}
           onChange={handleChange}
           placeholder="댓글을 입력하세요..."
           rows={3}
           className={`w-full px-4 py-3 rounded-xl border-2 transition-colors resize-none ${
-            errors.content ? 'border-red-400' : 'border-gray-200 focus:border-sky-400'
+            error ? 'border-red-400' : 'border-gray-200 focus:border-sky-400'
           } outline-none`}
         />
-        {errors.content && <p className="text-red-500 text-sm mt-1">{errors.content}</p>}
-      </div>
-
-      {/* 작성자 정보 */}
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        <div>
-          <input
-            type="text"
-            name="author"
-            value={formData.author}
-            onChange={handleChange}
-            placeholder="이름"
-            className={`w-full px-4 py-2 rounded-xl border-2 transition-colors ${
-              errors.author ? 'border-red-400' : 'border-gray-200 focus:border-sky-400'
-            } outline-none`}
-            maxLength={20}
-          />
-          {errors.author && <p className="text-red-500 text-sm mt-1">{errors.author}</p>}
-        </div>
-
-        <div>
-          <select
-            name="authorGrade"
-            value={formData.authorGrade}
-            onChange={handleChange}
-            className={`w-full px-4 py-2 rounded-xl border-2 transition-colors ${
-              errors.authorGrade ? 'border-red-400' : 'border-gray-200 focus:border-sky-400'
-            } outline-none`}
-          >
-            <option value="">학년 선택</option>
-            {grades.map(grade => (
-              <option key={grade} value={grade}>{grade}</option>
-            ))}
-          </select>
-          {errors.authorGrade && <p className="text-red-500 text-sm mt-1">{errors.authorGrade}</p>}
-        </div>
-      </div>
-
-      {/* 아바타 선택 */}
-      <div className="mb-4">
-        <div className="flex gap-2 mb-2">
-          {avatars.map(avatar => (
-            <button
-              key={avatar}
-              type="button"
-              onClick={() => handleAvatarSelect(avatar)}
-              className={`text-3xl p-3 rounded-xl border-2 transition-all ${
-                formData.authorAvatar === avatar
-                  ? 'border-sky-500 bg-sky-50 scale-110'
-                  : 'border-gray-200 hover:border-sky-300 hover:bg-gray-50'
-              }`}
-            >
-              {avatar}
-            </button>
-          ))}
-        </div>
-        {errors.authorAvatar && <p className="text-red-500 text-sm">{errors.authorAvatar}</p>}
+        {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
       </div>
 
       {/* 제출 버튼 */}

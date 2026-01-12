@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 // 날짜 포맷 함수
 function formatDate(date) {
@@ -20,9 +19,12 @@ function formatDate(date) {
   }
 }
 
-export default function PostCard({ post }) {
+export default function PostCard({ post, onClick }) {
   return (
-    <Link to={`/board/${post.id}`} className="block">
+    <div
+      onClick={() => onClick(post.id)}
+      className="block cursor-pointer"
+    >
       <div className="card-hover bg-white p-6 rounded-3xl border border-gray-100 h-full">
         <div className="flex items-center gap-3 mb-4">
           <span className="text-3xl">{post.authorAvatar}</span>
@@ -50,6 +52,6 @@ export default function PostCard({ post }) {
           </span>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }

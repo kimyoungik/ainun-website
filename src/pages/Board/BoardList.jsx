@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import Header from '../../components/Layout/Header';
 import Footer from '../../components/Layout/Footer';
 import PostCard from '../../components/Board/PostCard';
 import { boardService } from '../../services/boardService';
 
 export default function BoardList() {
+  const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,6 +29,24 @@ export default function BoardList() {
       console.error('게시글 로딩 실패:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleWriteClick = () => {
+    if (!currentUser) {
+      alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
+      navigate('/login');
+    } else {
+      navigate('/board/write');
+    }
+  };
+
+  const handlePostClick = (postId) => {
+    if (!currentUser) {
+      alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
+      navigate('/login');
+    } else {
+      navigate(`/board/${postId}`);
     }
   };
 
@@ -56,11 +77,12 @@ export default function BoardList() {
 
         {/* 글쓰기 버튼 */}
         <div className="flex justify-end mb-8">
-          <Link to="/board/write">
-            <button className="bg-gradient-to-r from-sky-400 to-sky-500 text-white px-6 py-3 rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105">
-              ✏️ 글쓰기
-            </button>
-          </Link>
+          <button
+            onClick={handleWriteClick}
+            className="bg-gradient-to-r from-sky-400 to-sky-500 text-white px-6 py-3 rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105"
+          >
+            ✏️ 글쓰기
+          </button>
         </div>
 
         {/* 로딩 상태 */}
@@ -75,16 +97,19 @@ export default function BoardList() {
             {posts.length > 0 ? (
               <div className="grid md:grid-cols-2 gap-6 mb-12">
                 {posts.map((post) => (
-                  <PostCard key={post.id} post={post} />
+                  <PostCard key={post.id} post={post} onClick={handlePostClick} />
                 ))}
               </div>
             ) : (
               <div className="text-center py-16">
                 <div className="text-6xl mb-4">📭</div>
                 <p className="text-gray-500 text-lg">아직 작성된 게시글이 없습니다.</p>
-                <Link to="/board/write" className="inline-block mt-4 text-sky-500 font-medium hover:underline">
+                <button
+                  onClick={handleWriteClick}
+                  className="inline-block mt-4 text-sky-500 font-medium hover:underline cursor-pointer"
+                >
                   첫 번째 글을 작성해보세요!
-                </Link>
+                </button>
               </div>
             )}
 

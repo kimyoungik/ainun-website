@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const { currentUser, userProfile, logout } = useAuth();
 
   const menuItems = [
     { name: '회사소개', href: '/#about' },
@@ -11,6 +14,15 @@ export default function Header() {
     { name: '구독하기', href: '/#subscribe' },
     { name: '고객센터', href: '/#support' },
   ];
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/');
+    } catch (error) {
+      console.error('로그아웃 실패:', error);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm">
@@ -34,9 +46,36 @@ export default function Header() {
                 </Link>
               )
             ))}
-            <button className="bg-gradient-to-r from-amber-400 to-orange-400 text-white px-5 py-2 rounded-full font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105">
-              구독 신청 →
-            </button>
+
+            {currentUser ? (
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">{userProfile?.avatar}</span>
+                  <span className="font-medium text-gray-700">{userProfile?.name}님</span>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="text-gray-600 hover:text-red-500 font-medium transition-colors"
+                >
+                  로그아웃
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3">
+                <Link
+                  to="/login"
+                  className="text-gray-600 hover:text-sky-500 font-medium transition-colors"
+                >
+                  로그인
+                </Link>
+                <Link
+                  to="/register"
+                  className="bg-gradient-to-r from-sky-400 to-sky-500 text-white px-5 py-2 rounded-full font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105"
+                >
+                  회원가입
+                </Link>
+              </div>
+            )}
           </nav>
 
           <button className="md:hidden p-2 text-gray-600" onClick={() => setIsMenuOpen(!isMenuOpen)}>
@@ -64,9 +103,41 @@ export default function Header() {
                   </Link>
                 )
               ))}
-              <button className="bg-gradient-to-r from-amber-400 to-orange-400 text-white px-5 py-3 rounded-full font-bold mt-2">
-                구독 신청 →
-              </button>
+
+              {currentUser ? (
+                <div className="flex flex-col gap-3 mt-2 pt-3 border-t border-gray-200">
+                  <div className="flex items-center gap-2 py-2">
+                    <span className="text-2xl">{userProfile?.avatar}</span>
+                    <span className="font-medium text-gray-700">{userProfile?.name}님</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setIsMenuOpen(false);
+                    }}
+                    className="text-left text-gray-600 hover:text-red-500 font-medium py-2 transition-colors"
+                  >
+                    로그아웃
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-3 mt-2 pt-3 border-t border-gray-200">
+                  <Link
+                    to="/login"
+                    className="text-center text-gray-600 hover:text-sky-500 font-medium py-2 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    로그인
+                  </Link>
+                  <Link
+                    to="/register"
+                    className="text-center bg-gradient-to-r from-sky-400 to-sky-500 text-white px-5 py-3 rounded-full font-bold shadow-lg"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    회원가입
+                  </Link>
+                </div>
+              )}
             </div>
           </nav>
         )}
