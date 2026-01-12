@@ -278,6 +278,7 @@ export default function Home() {
                   <li className="flex items-center gap-2 text-gray-600"><span className="text-green-500">✓</span> NIE 학습자료 제공</li>
                   <li className="flex items-center gap-2 text-gray-600"><span className="text-green-500">✓</span> 디지털 신문 열람</li>
                   <li className="flex items-center gap-2 text-gray-600"><span className="text-green-500">✓</span> 15,000원 할인!</li>
+                  <li className="flex items-center gap-2 text-gray-600"><span className="text-amber-500">🎁</span> 특별 선물 증정</li>
                 </ul>
                 <button
                   onClick={() => navigate('/subscribe?plan=6months')}
@@ -298,6 +299,7 @@ export default function Home() {
                   <li className="flex items-center gap-2 text-gray-600"><span className="text-green-500">✓</span> NIE 학습자료 제공</li>
                   <li className="flex items-center gap-2 text-gray-600"><span className="text-green-500">✓</span> 디지털 신문 열람</li>
                   <li className="flex items-center gap-2 text-gray-600"><span className="text-green-500">✓</span> 40,000원 할인!</li>
+                  <li className="flex items-center gap-2 text-gray-600"><span className="text-amber-500">🎁</span> 프리미엄 선물 증정</li>
                 </ul>
                 <button
                   onClick={() => navigate('/subscribe?plan=12months')}

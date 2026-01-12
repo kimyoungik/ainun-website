@@ -34,7 +34,7 @@ class PaymentService {
         originalPrice: 90000,
         discount: 15000,
         description: '매월 신문 배송 (24회)',
-        features: ['주 1회 배송', '온라인 열람', '독자후기 작성', '15,000원 할인']
+        features: ['주 1회 배송', '온라인 열람', '독자후기 작성', '15,000원 할인', '특별 선물 증정']
       },
       {
         id: '12months',
@@ -44,7 +44,7 @@ class PaymentService {
         originalPrice: 180000,
         discount: 40000,
         description: '매월 신문 배송 (48회)',
-        features: ['주 1회 배송', '온라인 열람', '독자후기 작성', '40,000원 할인', '특별 선물 증정']
+        features: ['주 1회 배송', '온라인 열람', '독자후기 작성', '40,000원 할인', '프리미엄 선물 증정']
       }
     ];
   }
