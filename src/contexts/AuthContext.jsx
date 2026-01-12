@@ -28,7 +28,10 @@ export function AuthProvider({ children }) {
         setCurrentUser(user);
         if (user) {
           try {
-            const profile = await authService.getProfile(user.id);
+            let profile = await authService.getProfile(user.id);
+            if (!profile) {
+              profile = await authService.ensureProfileFromUser(user);
+            }
             if (mounted) {
               setUserProfile(profile || null);
             }
@@ -49,7 +52,10 @@ export function AuthProvider({ children }) {
           if (session?.user) {
             setCurrentUser(session.user);
             try {
-              const profile = await authService.getProfile(session.user.id);
+              let profile = await authService.getProfile(session.user.id);
+              if (!profile) {
+                profile = await authService.ensureProfileFromUser(session.user);
+              }
               if (mounted) {
                 setUserProfile(profile || null);
               }
@@ -115,9 +121,17 @@ export function AuthProvider({ children }) {
     }
 
     const user = await authService.signIn(email, password);
-    const profile = await authService.getProfile(user.id);
+    let profile = await authService.getProfile(user.id);
+    if (!profile) {
+      profile = await authService.ensureProfileFromUser(user);
+    }
     setUserProfile(profile || null);
     return user;
+  };
+
+  const loginWithGoogle = async () => {
+    const redirectTo = window.location.origin;
+    await authService.signInWithGoogle(redirectTo);
   };
 
   const logout = async () => {
@@ -142,6 +156,7 @@ export function AuthProvider({ children }) {
     loading,
     register,
     login,
+    loginWithGoogle,
     logout,
     updateProfile,
   };

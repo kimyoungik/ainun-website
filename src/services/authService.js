@@ -37,6 +37,16 @@ class AuthService {
     return data.user
   }
 
+  async signInWithGoogle(redirectTo) {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: redirectTo ? { redirectTo } : undefined,
+    })
+
+    if (error) throw error
+    return data
+  }
+
   async signOut() {
     const { error } = await supabase.auth.signOut()
     if (error) throw error
@@ -69,6 +79,38 @@ class AuthService {
         updated_at: new Date().toISOString(),
       })
       .eq('id', userId)
+      .select()
+      .single()
+
+    if (error) throw error
+    return data
+  }
+
+  async ensureProfileFromUser(user) {
+    if (!user) return null
+
+    const existing = await this.getProfile(user.id)
+    if (existing) return existing
+
+    const metadata = user.user_metadata || {}
+    const name =
+      metadata.full_name ||
+      metadata.name ||
+      (user.email ? user.email.split('@')[0] : '사용자')
+    const grade = '초등 3학년'
+    const avatar = '😀'
+
+    const { data, error } = await supabase
+      .from('users')
+      .insert({
+        id: user.id,
+        email: user.email,
+        name,
+        grade,
+        avatar,
+        phone: null,
+        address: null,
+      })
       .select()
       .single()
 

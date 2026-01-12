@@ -7,7 +7,7 @@ import Footer from '../../components/Layout/Footer';
 export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -22,6 +22,15 @@ export default function Login() {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     setError('');
+  };
+
+  const handleGoogleLogin = async () => {
+    setError('');
+    try {
+      await loginWithGoogle();
+    } catch (err) {
+      setError(err.message || 'Google login failed.');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -57,6 +66,14 @@ export default function Login() {
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-3xl shadow-lg p-8">
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            className="w-full mb-4 bg-white border-2 border-gray-200 text-gray-700 py-4 rounded-xl font-bold shadow-sm hover:bg-gray-50 transition-colors"
+          >
+            Google? ????
+          </button>
+
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
               {error}
