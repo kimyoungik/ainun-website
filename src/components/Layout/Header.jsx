@@ -102,10 +102,13 @@ export default function Header() {
                     🛡️ 관리자
                   </Link>
                 )}
-                <div className="flex items-center gap-2">
+                <Link
+                  to="/mypage"
+                  className="flex items-center gap-2 text-gray-600 hover:text-sky-500 transition-colors"
+                >
                   <span className="text-2xl">{userProfile?.avatar}</span>
-                  <span className="font-medium text-gray-700">{userProfile?.name}님</span>
-                </div>
+                  <span className="font-medium">{userProfile?.name}님</span>
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="text-gray-600 hover:text-red-500 font-medium transition-colors"
@@ -168,6 +171,13 @@ export default function Header() {
                     <span className="text-2xl">{userProfile?.avatar}</span>
                     <span className="font-medium text-gray-700">{userProfile?.name}님</span>
                   </div>
+                  <Link
+                    to="/mypage"
+                    className="text-center bg-sky-100 text-sky-700 px-4 py-3 rounded-full font-bold hover:bg-sky-200 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    마이페이지
+                  </Link>
                   {isAdmin && (
                     <Link
                       to="/admin"

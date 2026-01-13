@@ -15,6 +15,7 @@ import SubscribePage from './pages/Subscribe/SubscribePage';
 import PaymentSuccess from './pages/Subscribe/PaymentSuccess';
 import PaymentFail from './pages/Subscribe/PaymentFail';
 import FreeTrial from './pages/FreeTrial/FreeTrial';
+import MyPage from './pages/MyPage/MyPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
 export default function App() {
@@ -67,6 +68,12 @@ export default function App() {
           <Route path="/payment/fail" element={<PaymentFail />} />
           {/* 무료 체험 페이지 */}
           <Route path="/free-trial" element={<FreeTrial />} />
+          {/* 마이페이지 */}
+          <Route path="/mypage" element={
+            <ProtectedRoute>
+              <MyPage />
+            </ProtectedRoute>
+          } />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
