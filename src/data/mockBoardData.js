@@ -1,8 +1,8 @@
 export const mockPosts = [
   {
     id: 1,
-    title: "아이눈 신문 너무 재밌어요!",
-    content: "매주 아이눈 신문이 오는 날이 제일 기다려져요! 어려운 뉴스도 쉽게 설명해주고, 만화도 있어서 정말 좋아요. 특히 과학 코너가 제일 재밌어요. 친구들한테도 추천했어요!",
+    title: "리틀타임즈 신문 너무 재밌어요!",
+    content: "매주 리틀타임즈 신문이 오는 날이 제일 기다려져요! 어려운 뉴스도 쉽게 설명해주고, 만화도 있어서 정말 좋아요. 특히 과학 코너가 제일 재밌어요. 친구들한테도 추천했어요!",
     author: "김민준",
     authorGrade: "초등 4학년",
     authorAvatar: "👦",
@@ -33,7 +33,7 @@ export const mockPosts = [
   {
     id: 2,
     title: "엄마랑 같이 읽어요",
-    content: "엄마가 아이눈 신문을 같이 읽자고 하셔서 처음엔 싫었는데, 읽어보니까 정말 재밌어요. 특히 세계 여러 나라 이야기가 신기해요!",
+    content: "엄마가 리틀타임즈 신문을 같이 읽자고 하셔서 처음엔 싫었는데, 읽어보니까 정말 재밌어요. 특히 세계 여러 나라 이야기가 신기해요!",
     author: "최서윤",
     authorGrade: "초등 2학년",
     authorAvatar: "👧",
@@ -86,7 +86,7 @@ export const mockPosts = [
   {
     id: 4,
     title: "학교 숙제할 때 도움돼요",
-    content: "사회 숙제할 때 아이눈 신문 보고 하면 더 쉬워요. 선생님도 칭찬해주셨어요!",
+    content: "사회 숙제할 때 리틀타임즈 신문 보고 하면 더 쉬워요. 선생님도 칭찬해주셨어요!",
     author: "송민재",
     authorGrade: "초등 6학년",
     authorAvatar: "👦",
@@ -139,7 +139,7 @@ export const mockPosts = [
   {
     id: 6,
     title: "동생이랑 같이 봐요",
-    content: "1학년 동생이랑 같이 아이눈 신문 읽어요. 제가 어려운 단어는 설명해주고 있어요!",
+    content: "1학년 동생이랑 같이 리틀타임즈 신문 읽어요. 제가 어려운 단어는 설명해주고 있어요!",
     author: "오태양",
     authorGrade: "초등 4학년",
     authorAvatar: "👦",
@@ -214,7 +214,7 @@ export const mockPosts = [
   {
     id: 9,
     title: "친구한테 신문 빌려줬어요",
-    content: "친구가 아이눈 신문 너무 재밌다고 해서 같이 봤어요. 친구도 구독하고 싶대요!",
+    content: "친구가 리틀타임즈 신문 너무 재밌다고 해서 같이 봤어요. 친구도 구독하고 싶대요!",
     author: "홍지안",
     authorGrade: "초등 5학년",
     authorAvatar: "👦",
@@ -236,7 +236,7 @@ export const mockPosts = [
   {
     id: 10,
     title: "생일 선물로 받았어요",
-    content: "엄마가 생일 선물로 아이눈 신문 1년 구독권을 주셨어요. 최고의 선물이에요!",
+    content: "엄마가 생일 선물로 리틀타임즈 신문 1년 구독권을 주셨어요. 최고의 선물이에요!",
     author: "문재원",
     authorGrade: "초등 3학년",
     authorAvatar: "🧒",

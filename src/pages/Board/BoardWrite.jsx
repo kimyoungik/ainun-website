@@ -76,7 +76,7 @@ export default function BoardWrite() {
           <h1 className="font-jua text-4xl md:text-5xl text-gray-800 mb-4">
             <span className="text-sky-500">후기</span> 작성하기
           </h1>
-          <p className="text-gray-500 text-lg">아이눈 신문에 대한 여러분의 생각을 들려주세요!</p>
+          <p className="text-gray-500 text-lg">리틀타임즈 신문에 대한 여러분의 생각을 들려주세요!</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-3xl shadow-lg p-8 md:p-10">
@@ -104,7 +104,7 @@ export default function BoardWrite() {
               name="content"
               value={formData.content}
               onChange={handleChange}
-              placeholder="아이눈 신문에 대한 후기를 자유롭게 작성해주세요 (최소 10자)"
+              placeholder="리틀타임즈 신문에 대한 후기를 자유롭게 작성해주세요 (최소 10자)"
               rows={10}
               className={`w-full px-4 py-3 rounded-xl border-2 transition-colors resize-none ${
                 errors.content ? 'border-red-400' : 'border-gray-200 focus:border-sky-400'

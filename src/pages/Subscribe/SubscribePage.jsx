@@ -125,7 +125,7 @@ export default function SubscribePage() {
           <h1 className="font-jua text-4xl md:text-5xl text-gray-800 mb-4">
             📰 <span className="text-sky-500">구독하기</span>
           </h1>
-          <p className="text-gray-500 text-lg">아이눈 어린이신문과 함께 성장해요!</p>
+          <p className="text-gray-500 text-lg">리틀타임즈와 함께 성장해요!</p>
         </div>
 
         {/* 구독 플랜 선택 */}

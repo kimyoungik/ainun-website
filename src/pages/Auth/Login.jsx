@@ -62,7 +62,7 @@ export default function Login() {
           <h1 className="font-jua text-4xl text-gray-800 mb-2">
             로그인
           </h1>
-          <p className="text-gray-500">아이눈과 함께해요!</p>
+          <p className="text-gray-500">리틀타임즈와 함께해요!</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-3xl shadow-lg p-8">

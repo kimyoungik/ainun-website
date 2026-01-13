@@ -72,7 +72,7 @@ export default function BoardList() {
           <h1 className="font-jua text-4xl md:text-5xl text-gray-800 mb-4">
             <span className="text-amber-500">독자</span> 후기 게시판
           </h1>
-          <p className="text-gray-500 text-lg">아이눈과 함께하는 친구들의 생생한 후기를 확인해보세요!</p>
+          <p className="text-gray-500 text-lg">리틀타임즈와 함께하는 친구들의 생생한 후기를 확인해보세요!</p>
         </div>
 
         {/* 글쓰기 버튼 */}

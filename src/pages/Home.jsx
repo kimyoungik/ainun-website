@@ -10,8 +10,8 @@ export default function Home() {
   const [isPaused, setIsPaused] = useState(false);
 
   const fallbackTestimonials = [
-    { name: "김지유 (초등 3학년)", text: "매주 아이눈 신문이 오는 날이 제일 기다려져요! 어려운 뉴스도 쉽게 알려줘서 좋아요.", avatar: "🧒" },
-    { name: "이준서 (초등 5학년)", text: "친구들한테 뉴스 이야기해주면 다들 신기해해요. 아이눈 덕분이에요!", avatar: "👦" },
+    { name: "김지유 (초등 3학년)", text: "매주 리틀타임즈 신문이 오는 날이 제일 기다려져요! 어려운 뉴스도 쉽게 알려줘서 좋아요.", avatar: "🧒" },
+    { name: "이준서 (초등 5학년)", text: "친구들한테 뉴스 이야기해주면 다들 신기해해요. 리틀타임즈 덕분이에요!", avatar: "👦" },
     { name: "박소율 (초등 2학년)", text: "그림이랑 만화가 많아서 재밌어요. 엄마아빠랑 같이 읽어요!", avatar: "👧" },
   ];
 
@@ -165,7 +165,7 @@ export default function Home() {
             <div className="flex-1 relative float mt-8 md:mt-0">
               <div className="relative w-full max-w-lg mx-auto">
                 <div className="bg-white rounded-2xl shadow-2xl p-3 transform rotate-1 hover:rotate-0 transition-transform">
-                  <img src="/newspaper.png" alt="아이눈 신문" className="w-full h-auto rounded-lg" />
+                  <img src="/newspaper.png" alt="리틀타임즈 신문" className="w-full h-auto rounded-lg" />
                 </div>
                 <div className="absolute -top-6 -right-6 text-4xl sparkle">⭐</div>
                 <div className="absolute -bottom-4 -left-4 text-3xl sparkle" style={{ animationDelay: '0.5s' }}>✨</div>
@@ -187,7 +187,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="font-jua text-3xl md:text-4xl text-gray-800 mb-4">
-              아이눈 어린이신문은 <span className="text-amber-500">특별</span>해요!
+              리틀타임즈 어린이신문은 <span className="text-amber-500">특별</span>해요!
             </h2>
             <p className="text-gray-500 text-lg">어린이 눈높이에 맞춘 알찬 콘텐츠</p>
           </div>
@@ -320,7 +320,7 @@ export default function Home() {
             <h2 className="font-jua text-3xl md:text-4xl text-gray-800 mb-4">
               <span className="text-amber-500">독자</span>들의 이야기
             </h2>
-            <p className="text-gray-500 text-lg">아이눈과 함께하는 친구들의 후기</p>
+            <p className="text-gray-500 text-lg">리틀타임즈과 함께하는 친구들의 후기</p>
           </div>
 
           <div className="max-w-2xl mx-auto">
@@ -363,9 +363,9 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="font-jua text-3xl md:text-4xl text-gray-800 mb-6">
-                <span className="text-sky-500">아이눈</span>을 소개합니다
+                <span className="text-sky-500">리틀타임즈</span>을 소개합니다
               </h2>
-              <p className="text-gray-600 leading-relaxed mb-6">아이눈 어린이신문은 어린이들이 세상을 바라보는 맑고 건강한 시각을 키워주기 위해 탄생했습니다.</p>
+              <p className="text-gray-600 leading-relaxed mb-6">리틀타임즈 어린이신문은 어린이들이 세상을 바라보는 맑고 건강한 시각을 키워주기 위해 탄생했습니다.</p>
               <p className="text-gray-600 leading-relaxed mb-6">전문 기자와 교육 전문가가 함께 만드는 양질의 콘텐츠로, 우리 아이들의 지적 호기심과 비판적 사고력을 길러줍니다.</p>
               <div className="grid grid-cols-3 gap-4 mt-8">
                 <div className="text-center">
@@ -385,7 +385,7 @@ export default function Home() {
             <div className="relative">
               <div className="bg-gradient-to-br from-sky-100 to-amber-100 rounded-3xl p-8 text-center">
                 <div className="text-8xl mb-4">🏢</div>
-                <div className="font-jua text-2xl text-gray-700 mb-2">아이눈 미디어</div>
+                <div className="font-jua text-2xl text-gray-700 mb-2">리틀타임즈 미디어</div>
                 <div className="text-gray-500">아이들의 꿈을 응원합니다</div>
               </div>
             </div>
@@ -407,7 +407,7 @@ export default function Home() {
                   무료 체험 신청하기
                 </h2>
                 <p className="text-lg md:text-xl mb-2 text-white/90">
-                  아이눈 어린이신문을 먼저 체험해보세요!
+                  리틀타임즈 어린이신문을 먼저 체험해보세요!
                 </p>
                 <p className="text-sm md:text-base mb-8 text-white/80">
                   첫 1회 무료 배송 후 구독 여부를 결정하실 수 있습니다.
@@ -458,7 +458,7 @@ export default function Home() {
             <div className="card-hover bg-gray-50 p-6 rounded-2xl text-center">
               <div className="text-4xl mb-4">💬</div>
               <div className="font-bold text-gray-800 mb-2">카카오톡 상담</div>
-              <div className="text-sky-500 font-bold text-lg">@아이눈신문</div>
+              <div className="text-sky-500 font-bold text-lg">@리틀타임즈신문</div>
               <div className="text-gray-400 text-sm mt-1">24시간 문의 가능</div>
             </div>
             <div className="card-hover bg-gray-50 p-6 rounded-2xl text-center">

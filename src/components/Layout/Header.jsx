@@ -44,7 +44,7 @@ export default function Header() {
       <div className="max-w-6xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center">
-            <img src="/KakaoTalk_20260108_105533703.png" alt="아이눈 어린이신문" className="h-10 md:h-12" />
+            <img src="/KakaoTalk_20260111_084512489.jpg" alt="리틀타임즈" className="h-10 md:h-12" />
           </Link>
 
           <nav className="hidden md:flex items-center gap-6">

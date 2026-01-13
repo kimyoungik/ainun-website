@@ -107,7 +107,7 @@ export default function FreeTrial() {
           <h1 className="font-jua text-4xl md:text-5xl text-gray-800 mb-4">
             📰 <span className="text-sky-500">무료 체험</span> 신청
           </h1>
-          <p className="text-gray-500 text-lg">아이눈 어린이신문을 무료로 체험해보세요!</p>
+          <p className="text-gray-500 text-lg">리틀타임즈를 무료로 체험해보세요!</p>
           <p className="text-gray-400 text-sm mt-2">첫 1회 무료 배송 후 구독 여부를 결정하실 수 있습니다.</p>
         </div>
 

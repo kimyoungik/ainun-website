@@ -118,7 +118,7 @@ export default function PaymentSuccess() {
             <p className="text-gray-600">
               {paymentInfo?.method === '가상계좌'
                 ? '아래 계좌로 입금하시면 구독이 시작됩니다.'
-                : '아이눈 어린이신문 구독이 시작되었습니다!'}
+                : '리틀타임즈 구독이 시작되었습니다!'}
             </p>
           </div>
 

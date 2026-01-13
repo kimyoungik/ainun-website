@@ -86,7 +86,7 @@ export default function Register() {
           <h1 className="font-jua text-4xl text-gray-800 mb-2">
             회원가입
           </h1>
-          <p className="text-gray-500">아이눈 가족이 되어주세요!</p>
+          <p className="text-gray-500">리틀타임즈 가족이 되어주세요!</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-3xl shadow-lg p-8">
