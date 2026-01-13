@@ -242,7 +242,7 @@ export default function Home() {
                   onClick={() => navigate('/subscribe?plan=1month')}
                   className="w-full py-3 rounded-xl border-2 border-sky-400 text-sky-500 font-bold hover:bg-sky-50 transition-all hover:scale-105 cursor-pointer"
                 >
-                  선택하기
+                  구독하기
                 </button>
               </div>
             </div>
@@ -261,9 +261,9 @@ export default function Home() {
                 </ul>
                 <button
                   onClick={() => navigate('/subscribe?plan=3months')}
-                  className="w-full py-3 rounded-xl bg-white text-sky-600 font-bold hover:bg-sky-50 transition-all hover:scale-105 cursor-pointer shadow-lg"
+                  className="w-full py-3 rounded-xl border-2 border-white text-white font-bold hover:bg-white hover:text-sky-600 transition-all hover:scale-105 cursor-pointer"
                 >
-                  구독하기 →
+                  구독하기
                 </button>
               </div>
             </div>
@@ -284,7 +284,7 @@ export default function Home() {
                   onClick={() => navigate('/subscribe?plan=6months')}
                   className="w-full py-3 rounded-xl border-2 border-sky-400 text-sky-500 font-bold hover:bg-sky-50 transition-all hover:scale-105 cursor-pointer"
                 >
-                  선택하기
+                  구독하기
                 </button>
               </div>
             </div>
@@ -305,7 +305,7 @@ export default function Home() {
                   onClick={() => navigate('/subscribe?plan=12months')}
                   className="w-full py-3 rounded-xl border-2 border-sky-400 text-sky-500 font-bold hover:bg-sky-50 transition-all hover:scale-105 cursor-pointer"
                 >
-                  선택하기
+                  구독하기
                 </button>
               </div>
             </div>
