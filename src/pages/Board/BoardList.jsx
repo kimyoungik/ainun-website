@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import Header from '../../components/Layout/Header';
 import Footer from '../../components/Layout/Footer';
@@ -8,6 +8,7 @@ import { boardService } from '../../services/boardService';
 
 export default function BoardList() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { currentUser } = useAuth();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,7 +18,7 @@ export default function BoardList() {
 
   useEffect(() => {
     loadPosts(currentPage);
-  }, [currentPage]);
+  }, [currentPage, location.key]);
 
   const loadPosts = async (page) => {
     setLoading(true);

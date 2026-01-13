@@ -64,6 +64,14 @@ export default function Header() {
     setIsMenuOpen(false);
   };
 
+  const handleRouteClick = (href) => {
+    navigate(href);
+    setIsMenuOpen(false);
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 0);
+  };
+
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm">
       <div className="max-w-6xl mx-auto px-4 py-3">
@@ -85,10 +93,15 @@ export default function Header() {
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-400 transition-all group-hover:w-full"></span>
                 </a>
               ) : (
-                <Link key={item.name} to={item.href} className="text-gray-600 hover:text-sky-500 font-medium transition-colors relative group">
+                <button
+                  key={item.name}
+                  type="button"
+                  onClick={() => handleRouteClick(item.href)}
+                  className="text-gray-600 hover:text-sky-500 font-medium transition-colors relative group"
+                >
                   {item.name}
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-400 transition-all group-hover:w-full"></span>
-                </Link>
+                </button>
               )
             ))}
 
@@ -159,9 +172,14 @@ export default function Header() {
                     {item.name}
                   </a>
                 ) : (
-                  <Link key={item.name} to={item.href} className="text-gray-600 hover:text-sky-500 font-medium py-2" onClick={() => setIsMenuOpen(false)}>
+                  <button
+                    key={item.name}
+                    type="button"
+                    onClick={() => handleRouteClick(item.href)}
+                    className="text-gray-600 hover:text-sky-500 font-medium py-2 text-left"
+                  >
                     {item.name}
-                  </Link>
+                  </button>
                 )
               ))}
 
