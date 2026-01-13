@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import Header from '../../components/Layout/Header';
@@ -19,8 +19,6 @@ export default function SubscribePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
-  const deliveryInfoRef = useRef(null);
-
   const plans = paymentService.getSubscriptionPlans();
 
   // URL 파라미터에서 플랜 읽어오기
@@ -28,10 +26,6 @@ export default function SubscribePage() {
     const planParam = searchParams.get('plan');
     if (planParam) {
       setSelectedPlan(planParam);
-      // 플랜 선택 후 잠시 후 스크롤 (DOM 렌더링 대기)
-      setTimeout(() => {
-        deliveryInfoRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
     }
   }, [searchParams]);
 
@@ -119,7 +113,7 @@ export default function SubscribePage() {
 
       <Header />
 
-      <div className="max-w-6xl mx-auto px-4 py-16">
+      <div className="max-w-7xl mx-auto px-4 py-16">
         {/* 페이지 헤더 */}
         <div className="text-center mb-12">
           <h1 className="font-jua text-4xl md:text-5xl text-gray-800 mb-4">
@@ -128,24 +122,119 @@ export default function SubscribePage() {
           <p className="text-gray-500 text-lg">아이눈 어린이신문과 함께 성장해요!</p>
         </div>
 
-        {/* 구독 플랜 선택 */}
-        <div className="mb-12">
-          <h2 className="font-jua text-2xl text-gray-800 mb-6 text-center">구독 플랜 선택</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {plans.map((plan) => (
-              <div
-                key={plan.id}
-                onClick={() => {
-                  setSelectedPlan(plan.id);
-                  // 플랜 선택 후 배송 정보 섹션으로 스크롤
-                  setTimeout(() => {
-                    deliveryInfoRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }, 100);
-                }}
-                className={`plan-card bg-white rounded-3xl shadow-lg p-6 cursor-pointer relative ${
-                  selectedPlan === plan.id ? 'selected' : ''
-                } ${plan.popular ? 'ring-2 ring-amber-400' : ''}`}
-              >
+        {/* 2단 레이아웃 */}
+        <div className="grid lg:grid-cols-2 gap-8">
+          {/* 왼쪽: 배송 정보 및 결제 */}
+          <div className="space-y-6">
+            {/* 배송 정보 */}
+            <div className="bg-white rounded-3xl shadow-lg p-8">
+              <h2 className="font-jua text-2xl text-gray-800 mb-6">배송 정보</h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-gray-700 font-bold mb-2">받는 분</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={deliveryInfo.name}
+                    onChange={handleDeliveryChange}
+                    placeholder="이름을 입력하세요"
+                    required
+                    className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-sky-400 outline-none transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-700 font-bold mb-2">연락처</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={deliveryInfo.phone}
+                    onChange={handleDeliveryChange}
+                    placeholder="01012345678"
+                    required
+                    className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-sky-400 outline-none transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-700 font-bold mb-2">배송 주소</label>
+                  <textarea
+                    name="address"
+                    value={deliveryInfo.address}
+                    onChange={handleDeliveryChange}
+                    placeholder="주소를 입력하세요"
+                    required
+                    rows="3"
+                    className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-sky-400 outline-none transition-colors resize-none"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 결제 수단 */}
+            <div className="bg-white rounded-3xl shadow-lg p-8">
+              <h2 className="font-jua text-2xl text-gray-800 mb-6">결제 수단</h2>
+              <div className="grid grid-cols-2 gap-4">
+                <div
+                  onClick={() => setPaymentMethod('card')}
+                  className={`cursor-pointer p-6 rounded-xl border-2 text-center transition-all ${
+                    paymentMethod === 'card'
+                      ? 'border-sky-400 bg-sky-50'
+                      : 'border-gray-200 hover:border-sky-200'
+                  }`}
+                >
+                  <div className="text-4xl mb-2">💳</div>
+                  <div className="font-bold text-gray-800">카드 결제</div>
+                  <div className="text-sm text-gray-500">즉시 결제</div>
+                </div>
+                <div
+                  onClick={() => setPaymentMethod('virtual_account')}
+                  className={`cursor-pointer p-6 rounded-xl border-2 text-center transition-all ${
+                    paymentMethod === 'virtual_account'
+                      ? 'border-sky-400 bg-sky-50'
+                      : 'border-gray-200 hover:border-sky-200'
+                  }`}
+                >
+                  <div className="text-4xl mb-2">🏦</div>
+                  <div className="font-bold text-gray-800">가상계좌</div>
+                  <div className="text-sm text-gray-500">계좌 이체</div>
+                </div>
+              </div>
+            </div>
+
+            {error && (
+              <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-600">
+                {error}
+              </div>
+            )}
+
+            <button
+              onClick={handleSubscribe}
+              disabled={!selectedPlan || isSubmitting}
+              className={`w-full py-4 rounded-xl font-bold text-white text-lg transition-all ${
+                !selectedPlan || isSubmitting
+                  ? 'bg-gray-300 cursor-not-allowed'
+                  : 'bg-sky-500 hover:bg-sky-600 cursor-pointer'
+              }`}
+            >
+              {isSubmitting ? '처리 중...' : '결제하기'}
+            </button>
+
+            <p className="text-sm text-gray-500 text-center">
+              결제 진행 시 이용약관 및 개인정보 처리방침에 동의한 것으로 간주합니다.
+            </p>
+          </div>
+
+          {/* 오른쪽: 구독 플랜 선택 */}
+          <div>
+            <h2 className="font-jua text-2xl text-gray-800 mb-6">구독 플랜 선택</h2>
+            <div className="grid grid-cols-2 gap-4">
+              {plans.map((plan) => (
+                <div
+                  key={plan.id}
+                  onClick={() => setSelectedPlan(plan.id)}
+                  className={`plan-card bg-white rounded-3xl shadow-lg p-6 cursor-pointer relative ${
+                    selectedPlan === plan.id ? 'selected' : ''
+                  } ${plan.popular ? 'ring-2 ring-amber-400' : ''}`}
+                >
                 {selectedPlan === plan.id && (
                   <div className="absolute top-3 right-3 bg-sky-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg">
                     ✓
@@ -185,111 +274,7 @@ export default function SubscribePage() {
             ))}
           </div>
         </div>
-
-        {selectedPlan && (
-          <div ref={deliveryInfoRef} className="max-w-2xl mx-auto">
-            {/* 배송 정보 */}
-            <div className="bg-white rounded-3xl shadow-lg p-8 mb-6">
-              <h2 className="font-jua text-2xl text-gray-800 mb-6">배송 정보</h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-gray-700 font-bold mb-2">받는 분</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={deliveryInfo.name}
-                    onChange={handleDeliveryChange}
-                    placeholder="이름을 입력하세요"
-                    required
-                    className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-sky-400 outline-none transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700 font-bold mb-2">연락처</label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={deliveryInfo.phone}
-                    onChange={handleDeliveryChange}
-                    placeholder="01012345678"
-                    required
-                    className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-sky-400 outline-none transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700 font-bold mb-2">배송 주소</label>
-                  <input
-                    type="text"
-                    name="address"
-                    value={deliveryInfo.address}
-                    onChange={handleDeliveryChange}
-                    placeholder="주소를 입력하세요"
-                    required
-                    className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-sky-400 outline-none transition-colors"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* 결제 수단 선택 */}
-            <div className="bg-white rounded-3xl shadow-lg p-8 mb-6">
-              <h2 className="font-jua text-2xl text-gray-800 mb-6">결제 수단</h2>
-              <div className="grid md:grid-cols-2 gap-4">
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod('card')}
-                  className={`p-4 rounded-xl border-2 transition-all ${
-                    paymentMethod === 'card'
-                      ? 'border-sky-500 bg-sky-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <div className="text-3xl mb-2">💳</div>
-                  <div className="font-bold text-gray-800">카드 결제</div>
-                  <div className="text-sm text-gray-500">즉시 결제</div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod('virtual_account')}
-                  className={`p-4 rounded-xl border-2 transition-all ${
-                    paymentMethod === 'virtual_account'
-                      ? 'border-sky-500 bg-sky-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <div className="text-3xl mb-2">🏦</div>
-                  <div className="font-bold text-gray-800">가상계좌</div>
-                  <div className="text-sm text-gray-500">계좌 이체</div>
-                </button>
-              </div>
-            </div>
-
-            {error && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600">
-                {error}
-              </div>
-            )}
-
-            {/* 결제 버튼 */}
-            <button
-              onClick={handleSubscribe}
-              disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-sky-400 to-sky-500 text-white py-5 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-            >
-              {isSubmitting ? '결제 진행 중...' : '결제하기'}
-            </button>
-
-            <p className="text-center text-gray-500 text-sm mt-4">
-              결제 진행 시 이용약관 및 개인정보 처리방침에 동의한 것으로 간주됩니다.
-            </p>
-          </div>
-        )}
-
-        {!selectedPlan && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">구독 플랜을 선택해주세요</p>
-          </div>
-        )}
+      </div>
       </div>
 
       <Footer />
