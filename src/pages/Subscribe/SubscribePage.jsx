@@ -137,10 +137,6 @@ export default function SubscribePage() {
                 key={plan.id}
                 onClick={() => {
                   setSelectedPlan(plan.id);
-                  // 플랜 선택 후 배송 정보 섹션으로 스크롤
-                  setTimeout(() => {
-                    deliveryInfoRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }, 100);
                 }}
                 className={`plan-card bg-white rounded-3xl shadow-lg p-6 cursor-pointer relative ${
                   selectedPlan === plan.id ? 'selected' : ''
