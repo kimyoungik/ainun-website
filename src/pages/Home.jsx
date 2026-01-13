@@ -237,6 +237,8 @@ export default function Home() {
                   <li className="flex items-center gap-2 text-gray-600"><span className="text-green-500">✓</span> 주간 신문 4회 배송</li>
                   <li className="flex items-center gap-2 text-gray-600"><span className="text-green-500">✓</span> NIE 학습자료 제공</li>
                   <li className="flex items-center gap-2 text-gray-600"><span className="text-green-500">✓</span> 디지털 신문 열람</li>
+                  <li className="flex items-center gap-2 text-gray-600"><span className="text-green-500">✓</span> 독자후기 작성</li>
+                  <li className="flex items-center gap-2 text-transparent"><span>　</span>　</li>
                 </ul>
                 <button
                   onClick={() => navigate('/subscribe?plan=1month')}
@@ -257,6 +259,7 @@ export default function Home() {
                   <li className="flex items-center gap-2 text-white"><span className="text-amber-300">✓</span> 주간 신문 12회 배송</li>
                   <li className="flex items-center gap-2 text-white"><span className="text-amber-300">✓</span> NIE 학습자료 제공</li>
                   <li className="flex items-center gap-2 text-white"><span className="text-amber-300">✓</span> 디지털 신문 열람</li>
+                  <li className="flex items-center gap-2 text-white"><span className="text-amber-300">✓</span> 독자후기 작성</li>
                   <li className="flex items-center gap-2 text-white"><span className="text-amber-300">✓</span> 5,000원 할인!</li>
                 </ul>
                 <button
@@ -277,7 +280,7 @@ export default function Home() {
                   <li className="flex items-center gap-2 text-gray-600"><span className="text-green-500">✓</span> 주간 신문 24회 배송</li>
                   <li className="flex items-center gap-2 text-gray-600"><span className="text-green-500">✓</span> NIE 학습자료 제공</li>
                   <li className="flex items-center gap-2 text-gray-600"><span className="text-green-500">✓</span> 디지털 신문 열람</li>
-                  <li className="flex items-center gap-2 text-gray-600"><span className="text-green-500">✓</span> 15,000원 할인!</li>
+                  <li className="flex items-center gap-2 text-gray-600"><span className="text-green-500">✓</span> 독자후기 작성</li>
                   <li className="flex items-center gap-2 text-gray-600"><span className="text-amber-500">🎁</span> 특별 선물 증정</li>
                 </ul>
                 <button
