@@ -20,8 +20,38 @@ export function AuthProvider({ children }) {
     let mounted = true;
     let subscription = null;
 
+    // 세션 만료 체크 (24시간)
+    const checkSessionExpiry = async () => {
+      const loginTimestamp = localStorage.getItem('loginTimestamp');
+      if (loginTimestamp) {
+        const now = Date.now();
+        const loginTime = parseInt(loginTimestamp, 10);
+        const oneDayInMs = 24 * 60 * 60 * 1000; // 24시간
+
+        if (now - loginTime > oneDayInMs) {
+          // 24시간이 지났으면 로그아웃
+          console.log('Session expired. Logging out...');
+          localStorage.removeItem('loginTimestamp');
+          await authService.signOut();
+          return true; // 세션 만료됨
+        }
+      }
+      return false; // 세션 유효
+    };
+
     const initAuth = async () => {
       try {
+        // 먼저 세션 만료 체크
+        const isExpired = await checkSessionExpiry();
+        if (isExpired) {
+          if (mounted) {
+            setCurrentUser(null);
+            setUserProfile(null);
+            setLoading(false);
+          }
+          return;
+        }
+
         const user = await authService.getCurrentUser();
         if (!mounted) return;
 
@@ -51,6 +81,12 @@ export function AuthProvider({ children }) {
 
           if (session?.user) {
             setCurrentUser(session.user);
+
+            // 로그인 시간이 없으면 저장 (구글 로그인 리다이렉트 후 처리)
+            if (!localStorage.getItem('loginTimestamp')) {
+              localStorage.setItem('loginTimestamp', Date.now().toString());
+            }
+
             try {
               let profile = await authService.getProfile(session.user.id);
               if (!profile) {
@@ -68,6 +104,8 @@ export function AuthProvider({ children }) {
           } else {
             setCurrentUser(null);
             setUserProfile(null);
+            // 로그아웃 시 타임스탬프 제거
+            localStorage.removeItem('loginTimestamp');
           }
         });
 
@@ -126,18 +164,28 @@ export function AuthProvider({ children }) {
       profile = await authService.ensureProfileFromUser(user);
     }
     setUserProfile(profile || null);
+
+    // 로그인 시간 저장
+    localStorage.setItem('loginTimestamp', Date.now().toString());
+
     return user;
   };
 
   const loginWithGoogle = async () => {
     const redirectTo = window.location.origin;
     await authService.signInWithGoogle(redirectTo);
+
+    // 로그인 시간 저장 (구글 로그인 후 리다이렉트 되므로 여기서도 저장)
+    localStorage.setItem('loginTimestamp', Date.now().toString());
   };
 
   const logout = async () => {
     await authService.signOut();
     setCurrentUser(null);
     setUserProfile(null);
+
+    // 로그아웃 시 타임스탬프 제거
+    localStorage.removeItem('loginTimestamp');
   };
 
   const updateProfile = async (profileData) => {
