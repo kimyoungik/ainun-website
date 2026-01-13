@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import Header from '../../components/Layout/Header';
@@ -19,6 +19,8 @@ export default function SubscribePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
+  const deliveryInfoRef = useRef(null);
+
   const plans = paymentService.getSubscriptionPlans();
 
   // URL 파라미터에서 플랜 읽어오기
@@ -26,6 +28,10 @@ export default function SubscribePage() {
     const planParam = searchParams.get('plan');
     if (planParam) {
       setSelectedPlan(planParam);
+      // 플랜 선택 후 잠시 후 스크롤 (DOM 렌더링 대기)
+      setTimeout(() => {
+        deliveryInfoRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
     }
   }, [searchParams]);
 
@@ -129,7 +135,13 @@ export default function SubscribePage() {
             {plans.map((plan) => (
               <div
                 key={plan.id}
-                onClick={() => setSelectedPlan(plan.id)}
+                onClick={() => {
+                  setSelectedPlan(plan.id);
+                  // 플랜 선택 후 배송 정보 섹션으로 스크롤
+                  setTimeout(() => {
+                    deliveryInfoRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }, 100);
+                }}
                 className={`plan-card bg-white rounded-3xl shadow-lg p-6 cursor-pointer relative ${
                   selectedPlan === plan.id ? 'selected' : ''
                 } ${plan.popular ? 'ring-2 ring-amber-400' : ''}`}
@@ -175,7 +187,7 @@ export default function SubscribePage() {
         </div>
 
         {selectedPlan && (
-          <div className="max-w-2xl mx-auto">
+          <div ref={deliveryInfoRef} className="max-w-2xl mx-auto">
             {/* 배송 정보 */}
             <div className="bg-white rounded-3xl shadow-lg p-8 mb-6">
               <h2 className="font-jua text-2xl text-gray-800 mb-6">배송 정보</h2>
