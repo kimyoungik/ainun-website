@@ -156,9 +156,6 @@ export default function Home() {
                 <strong className="text-amber-500">매주 새로운 세상</strong>을 만나보세요.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start mb-4 md:mb-0">
-                <button className="bg-gradient-to-r from-sky-400 to-sky-500 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl transition-all hover:scale-105 bounce-soft">
-                  📰 무료 체험 신청
-                </button>
                 <button className="bg-white text-gray-700 px-8 py-4 rounded-2xl font-bold text-lg shadow-md hover:shadow-lg transition-all border-2 border-gray-100 hover:border-sky-200">
                   📖 신문 미리보기
                 </button>
