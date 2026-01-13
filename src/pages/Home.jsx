@@ -316,6 +316,53 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 무료 체험 신청 섹션 */}
+      <section className="py-16 bg-gradient-to-b from-amber-50 to-white">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="max-w-3xl mx-auto">
+            <div className="bg-gradient-to-br from-amber-400 to-orange-400 rounded-3xl shadow-xl p-8 md:p-12 text-center text-white relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -mr-32 -mt-32"></div>
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-10 rounded-full -ml-24 -mb-24"></div>
+
+              <div className="relative z-10">
+                <div className="text-5xl mb-4">🎁</div>
+                <h2 className="font-jua text-3xl md:text-4xl mb-4">
+                  무료 체험 신청하기
+                </h2>
+                <p className="text-lg md:text-xl mb-2 text-white/90">
+                  아이눈 어린이신문을 먼저 체험해보세요!
+                </p>
+                <p className="text-sm md:text-base mb-8 text-white/80">
+                  첫 1회 무료 배송 후 구독 여부를 결정하실 수 있습니다.
+                </p>
+
+                <button
+                  onClick={() => navigate('/free-trial')}
+                  className="bg-white text-orange-500 px-8 py-4 rounded-xl font-bold text-lg hover:bg-orange-50 transition-all hover:scale-105 shadow-lg cursor-pointer"
+                >
+                  무료 체험 신청하기 →
+                </button>
+
+                <div className="mt-8 flex flex-wrap justify-center gap-4 text-sm text-white/90">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">✓</span>
+                    <span>신청 후 1주일 무료 체험</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">✓</span>
+                    <span>구독 강제 없음</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">✓</span>
+                    <span>빠른 배송</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 독자 후기 섹션 */}
       <section id="reviews" className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4">
