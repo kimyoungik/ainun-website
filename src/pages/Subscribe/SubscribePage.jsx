@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import Header from '../../components/Layout/Header';
 import Footer from '../../components/Layout/Footer';
+import AddressInput from '../../components/AddressInput';
 import { paymentService } from '../../services/paymentService';
 
 export default function SubscribePage() {
@@ -14,7 +15,8 @@ export default function SubscribePage() {
   const [deliveryInfo, setDeliveryInfo] = useState({
     name: '',
     phone: '',
-    address: ''
+    address: '',
+    detailAddress: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -50,6 +52,14 @@ export default function SubscribePage() {
     setDeliveryInfo(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleAddressChange = (addressData) => {
+    setDeliveryInfo(prev => ({
+      ...prev,
+      ...(addressData.address !== undefined && { address: addressData.address }),
+      ...(addressData.detailAddress !== undefined && { detailAddress: addressData.detailAddress })
+    }));
+  };
+
   const handleSubscribe = async () => {
     if (!currentUser) {
       alert('로그인이 필요합니다.');
@@ -62,7 +72,7 @@ export default function SubscribePage() {
       return;
     }
 
-    if (!deliveryInfo.name || !deliveryInfo.phone || !deliveryInfo.address) {
+    if (!deliveryInfo.name || !deliveryInfo.phone || !deliveryInfo.address || !deliveryInfo.detailAddress) {
       alert('배송 정보를 모두 입력해주세요.');
       return;
     }
@@ -71,11 +81,15 @@ export default function SubscribePage() {
     setError('');
 
     try {
-      // 1. 구독 정보 생성
+      // 1. 구독 정보 생성 (주소 합치기)
+      const fullDeliveryInfo = {
+        ...deliveryInfo,
+        address: `${deliveryInfo.address} ${deliveryInfo.detailAddress}`
+      };
       const { orderId, amount, planName } = await paymentService.createSubscription(
         currentUser.id,
         selectedPlan,
-        deliveryInfo
+        fullDeliveryInfo
       );
 
       // 2. 토스페이먼츠 결제 요청
@@ -214,14 +228,10 @@ export default function SubscribePage() {
                 </div>
                 <div>
                   <label className="block text-gray-700 font-bold mb-2">배송 주소</label>
-                  <input
-                    type="text"
-                    name="address"
-                    value={deliveryInfo.address}
-                    onChange={handleDeliveryChange}
-                    placeholder="주소를 입력하세요"
-                    required
-                    className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-sky-400 outline-none transition-colors"
+                  <AddressInput
+                    address={deliveryInfo.address}
+                    detailAddress={deliveryInfo.detailAddress}
+                    onAddressChange={handleAddressChange}
                   />
                 </div>
               </div>

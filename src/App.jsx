@@ -67,7 +67,11 @@ export default function App() {
           <Route path="/payment/success" element={<PaymentSuccess />} />
           <Route path="/payment/fail" element={<PaymentFail />} />
           {/* 무료 체험 페이지 */}
-          <Route path="/free-trial" element={<FreeTrial />} />
+          <Route path="/free-trial" element={
+            <ProtectedRoute>
+              <FreeTrial />
+            </ProtectedRoute>
+          } />
           {/* 마이페이지 */}
           <Route path="/mypage" element={
             <ProtectedRoute>

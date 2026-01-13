@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import Header from '../../components/Layout/Header';
 import Footer from '../../components/Layout/Footer';
+import AddressInput from '../../components/AddressInput';
 import { supabase } from '../../lib/supabase';
 
 export default function FreeTrial() {
   const navigate = useNavigate();
+  const { currentUser, userProfile } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    address: ''
+    address: '',
+    detailAddress: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -18,6 +22,14 @@ export default function FreeTrial() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleAddressChange = (addressData) => {
+    setFormData(prev => ({
+      ...prev,
+      ...(addressData.address !== undefined && { address: addressData.address }),
+      ...(addressData.detailAddress !== undefined && { detailAddress: addressData.detailAddress })
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -36,17 +48,22 @@ export default function FreeTrial() {
       }
 
       if (!formData.address || formData.address.trim().length < 5) {
-        throw new Error('상세한 주소를 입력해주세요.');
+        throw new Error('주소를 검색하여 선택해주세요.');
+      }
+
+      if (!formData.detailAddress || formData.detailAddress.trim().length < 2) {
+        throw new Error('상세 주소를 입력해주세요.');
       }
 
       // Supabase에 무료 체험 신청 저장
+      const fullAddress = `${formData.address.trim()} ${formData.detailAddress.trim()}`;
       const { error: insertError } = await supabase
         .from('free_trials')
         .insert([
           {
             name: formData.name.trim(),
             phone: formData.phone.trim(),
-            address: formData.address.trim(),
+            address: fullAddress,
             status: 'pending'
           }
         ]);
@@ -54,7 +71,7 @@ export default function FreeTrial() {
       if (insertError) throw insertError;
 
       setSuccess(true);
-      setFormData({ name: '', phone: '', address: '' });
+      setFormData({ name: '', phone: '', address: '', detailAddress: '' });
 
       // 3초 후 홈으로 이동
       setTimeout(() => {
@@ -155,14 +172,10 @@ export default function FreeTrial() {
                 <label className="block text-gray-700 font-bold mb-2">
                   배송 주소 <span className="text-red-500">*</span>
                 </label>
-                <textarea
-                  name="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                  placeholder="도로명 주소를 포함한 상세 주소를 입력해주세요"
-                  required
-                  rows="3"
-                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-sky-400 outline-none transition-colors resize-none"
+                <AddressInput
+                  address={formData.address}
+                  detailAddress={formData.detailAddress}
+                  onAddressChange={handleAddressChange}
                 />
               </div>
             </div>

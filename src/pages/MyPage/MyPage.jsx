@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import Header from '../../components/Layout/Header';
 import Footer from '../../components/Layout/Footer';
+import AddressInput from '../../components/AddressInput';
 import { supabase } from '../../lib/supabase';
 
 export default function MyPage() {
@@ -15,7 +16,8 @@ export default function MyPage() {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    address: ''
+    address: '',
+    detailAddress: ''
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -61,6 +63,14 @@ export default function MyPage() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleAddressChange = (addressData) => {
+    setFormData(prev => ({
+      ...prev,
+      ...(addressData.address !== undefined && { address: addressData.address }),
+      ...(addressData.detailAddress !== undefined && { detailAddress: addressData.detailAddress })
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -75,10 +85,14 @@ export default function MyPage() {
         throw new Error('올바른 연락처를 입력해주세요.');
       }
 
+      const fullAddress = formData.detailAddress
+        ? `${formData.address.trim()} ${formData.detailAddress.trim()}`
+        : formData.address.trim();
+
       await updateProfile({
         name: formData.name.trim(),
         phone: formData.phone.trim(),
-        address: formData.address.trim()
+        address: fullAddress
       });
 
       setSuccess('프로필이 성공적으로 업데이트되었습니다.');
@@ -242,18 +256,11 @@ export default function MyPage() {
 
                 <div>
                   <label className="block text-gray-700 font-bold mb-2">배송 주소</label>
-                  <textarea
-                    name="address"
-                    value={formData.address}
-                    onChange={handleChange}
+                  <AddressInput
+                    address={formData.address}
+                    detailAddress={formData.detailAddress}
+                    onAddressChange={handleAddressChange}
                     disabled={!isEditing}
-                    rows="3"
-                    placeholder="배송받으실 주소를 입력하세요"
-                    className={`w-full px-4 py-3 rounded-xl border-2 outline-none transition-colors resize-none ${
-                      isEditing
-                        ? 'border-gray-200 focus:border-sky-400'
-                        : 'border-gray-100 bg-gray-50 text-gray-600'
-                    }`}
                   />
                 </div>
 
@@ -284,7 +291,8 @@ export default function MyPage() {
                       setFormData({
                         name: userProfile?.name || '',
                         phone: userProfile?.phone || '',
-                        address: userProfile?.address || ''
+                        address: userProfile?.address || '',
+                        detailAddress: ''
                       });
                       setError('');
                     }}
