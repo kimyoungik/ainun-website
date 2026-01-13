@@ -458,7 +458,7 @@ export default function Home() {
             <div className="card-hover bg-gray-50 p-6 rounded-2xl text-center">
               <div className="text-4xl mb-4">💬</div>
               <div className="font-bold text-gray-800 mb-2">카카오톡 상담</div>
-              <div className="text-sky-500 font-bold text-lg">@리틀타임즈신문</div>
+              <div className="text-sky-500 font-bold text-lg">@리틀타임즈</div>
               <div className="text-gray-400 text-sm mt-1">24시간 문의 가능</div>
             </div>
             <div className="card-hover bg-gray-50 p-6 rounded-2xl text-center">
