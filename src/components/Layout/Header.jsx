@@ -171,7 +171,7 @@ export default function Header() {
         </div>
 
         {isMenuOpen && (
-          <nav className="md:hidden mt-4 pb-4 border-t pt-4">
+          <nav className="md:hidden mt-4 pb-4 border-t pt-4 bg-white/90 backdrop-blur-md shadow-sm rounded-2xl">
             <div className="flex flex-col gap-3">
               {menuItems.map((item) => (
                 item.isAnchor ? (
