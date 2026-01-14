@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Layout/Header';
 import Footer from '../components/Layout/Footer';
@@ -8,6 +8,7 @@ export default function Home() {
   const navigate = useNavigate();
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const heroVideoRef = useRef(null);
 
   const fallbackTestimonials = [
     { name: "김지유 (초등 3학년)", text: "매주 리틀타임즈 신문이 오는 날이 제일 기다려져요! 어려운 뉴스도 쉽게 알려줘서 좋아요.", avatar: "🧒" },
@@ -63,6 +64,15 @@ export default function Home() {
 
     return () => clearInterval(interval);
   }, [isPaused, testimonials.length]);
+
+  useEffect(() => {
+    const video = heroVideoRef.current;
+    if (!video) return;
+    const playPromise = video.play();
+    if (playPromise?.catch) {
+      playPromise.catch(() => {});
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-50 via-white to-amber-50" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>
@@ -142,12 +152,19 @@ export default function Home() {
 
       <section className="relative h-[90vh] min-h-[640px] w-full overflow-hidden bg-black">
         <video
+          ref={heroVideoRef}
           className="absolute inset-0 h-full w-full object-cover"
           src="/seoul.mp4"
           autoPlay
           loop
           muted
           playsInline
+          onCanPlay={() => {
+            const video = heroVideoRef.current;
+            if (video) {
+              video.play().catch(() => {});
+            }
+          }}
         />
         <div className="absolute inset-0 bg-black/60" />
         <div className="absolute inset-0 flex items-center justify-center text-center px-4">
