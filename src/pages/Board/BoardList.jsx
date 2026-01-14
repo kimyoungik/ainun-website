@@ -12,6 +12,7 @@ export default function BoardList() {
   const { currentUser } = useAuth();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const postsPerPage = 10;
@@ -22,12 +23,23 @@ export default function BoardList() {
 
   const loadPosts = async (page) => {
     setLoading(true);
+    setErrorMessage('');
     try {
-      const data = await boardService.getPosts(page, postsPerPage);
-      setPosts(data.posts);
-      setTotalPages(data.totalPages);
+      const timeoutMs = 8000;
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('timeout')), timeoutMs);
+      });
+      const data = await Promise.race([
+        boardService.getPosts(page, postsPerPage),
+        timeoutPromise
+      ]);
+      setPosts(data.posts || []);
+      setTotalPages(data.totalPages || 1);
     } catch (error) {
-      console.error('게시글 로딩 실패:', error);
+      console.error('??? ?? ??:', error);
+      setPosts([]);
+      setTotalPages(1);
+      setErrorMessage('???? ????? ??????. ?? ??????.');
     } finally {
       setLoading(false);
     }
@@ -91,6 +103,16 @@ export default function BoardList() {
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-sky-400 border-t-transparent"></div>
             <p className="text-gray-500 mt-4">게시글을 불러오는 중...</p>
+          </div>
+        ) : errorMessage ? (
+          <div className="text-center py-16">
+            <p className="text-gray-500 text-lg mb-4">{errorMessage}</p>
+            <button
+              onClick={() => loadPosts(currentPage)}
+              className="inline-block text-sky-500 font-medium hover:underline cursor-pointer"
+            >
+              ?? ??
+            </button>
           </div>
         ) : (
           <>
