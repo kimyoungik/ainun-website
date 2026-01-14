@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Layout/Header';
 import Footer from '../components/Layout/Footer';
@@ -67,9 +67,10 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-50 via-white to-amber-50" style={{ fontFamily: "'Noto Sans KR', sans-serif" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Jua&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Jua&family=Gowun+Batang:wght@400;700&display=swap');
 
         .font-jua { font-family: 'Jua', sans-serif; }
+        .font-gowun-batang { font-family: 'Gowun Batang', serif; }
 
         .logo-text {
           font-family: 'Jua', sans-serif;
@@ -138,6 +139,28 @@ export default function Home() {
       `}</style>
 
       <Header />
+
+      <section className="relative h-[80vh] min-h-[560px] w-full overflow-hidden bg-black">
+        <video
+          className="absolute inset-0 h-full w-full object-cover"
+          src="/seoul.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+        />
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 flex items-center justify-center text-center px-4">
+          <div className="text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.45)]">
+            <div className="font-gowun-batang text-3xl md:text-5xl lg:text-6xl tracking-tight">
+              아이의 눈으로 세상을 읽다.
+            </div>
+            <div className="font-gowun-batang mt-5 text-lg md:text-2xl text-white/90">
+              매주 새로운 세상을 만나보세요!
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* 히어로 섹션 */}
       <section className="hero-pattern relative overflow-hidden pb-24 md:pb-32">
