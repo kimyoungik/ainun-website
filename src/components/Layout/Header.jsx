@@ -106,7 +106,7 @@ export default function Header() {
                   key={item.name}
                   type="button"
                   onClick={() => handleRouteClick(item.href)}
-                  className={`${menuTextClass} hover:text-sky-500 font-medium transition-colors relative group`}
+                  className={`${menuTextClass} hover:text-sky-500 font-medium transition-colors relative group cursor-pointer`}
                 >
                   {item.name}
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-400 transition-all group-hover:w-full"></span>
@@ -133,7 +133,7 @@ export default function Header() {
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className={`${menuTextClass} hover:text-red-500 font-medium transition-colors`}
+                  className={`${menuTextClass} hover:text-red-500 font-medium transition-colors cursor-pointer`}
                 >
                   로그아웃
                 </button>
@@ -142,7 +142,7 @@ export default function Header() {
               <div className="flex items-center gap-3">
                 <Link
                   to="/login"
-                  className={`${menuTextClass} hover:text-sky-500 font-medium transition-colors`}
+                  className={`${menuTextClass} hover:text-sky-500 font-medium transition-colors cursor-pointer`}
                 >
                   로그인
                 </Link>
@@ -185,7 +185,7 @@ export default function Header() {
                     key={item.name}
                     type="button"
                     onClick={() => handleRouteClick(item.href)}
-                    className="text-gray-600 hover:text-sky-500 font-medium py-2 text-left"
+                    className="text-gray-600 hover:text-sky-500 font-medium py-2 text-left cursor-pointer"
                   >
                     {item.name}
                   </button>
@@ -219,7 +219,7 @@ export default function Header() {
                       handleLogout();
                       setIsMenuOpen(false);
                     }}
-                    className="text-left text-gray-600 hover:text-red-500 font-medium py-2 transition-colors"
+                    className="text-left text-gray-600 hover:text-red-500 font-medium py-2 transition-colors cursor-pointer"
                   >
                     로그아웃
                   </button>
