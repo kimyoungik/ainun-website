@@ -140,7 +140,7 @@ export default function Home() {
 
       <Header />
 
-      <section className="relative h-[80vh] min-h-[560px] w-full overflow-hidden bg-black">
+      <section className="relative h-[90vh] min-h-[640px] w-full overflow-hidden bg-black">
         <video
           className="absolute inset-0 h-full w-full object-cover"
           src="/seoul.mp4"
@@ -149,7 +149,7 @@ export default function Home() {
           muted
           playsInline
         />
-        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 bg-black/60" />
         <div className="absolute inset-0 flex items-center justify-center text-center px-4">
           <div className="text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.45)]">
             <div className="font-gowun-batang text-3xl md:text-5xl lg:text-6xl tracking-tight">
@@ -511,6 +511,15 @@ export default function Home() {
       </section>
 
       <Footer />
+
+      <button
+        type="button"
+        aria-label="맨 위로"
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className="fixed bottom-10 right-15 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-sky-500 text-white shadow-lg transition hover:bg-sky-600 cursor-pointer"
+      >
+        ↑
+      </button>
     </div>
   );
 }

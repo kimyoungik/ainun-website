@@ -1,5 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { adminService } from '../../services/adminService';
 
@@ -7,7 +7,10 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { currentUser, userProfile, logout } = useAuth();
+  const isHome = location.pathname === '/';
+  const menuTextClass = isHome ? 'text-white' : 'text-gray-600';
 
   useEffect(() => {
     checkAdmin();
@@ -73,7 +76,13 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm">
+    <header
+      className={
+        isHome
+          ? 'absolute top-0 left-0 right-0 z-50 bg-transparent'
+          : 'sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm'
+      }
+    >
       <div className="max-w-6xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center">
@@ -87,7 +96,7 @@ export default function Header() {
                   key={item.name}
                   href={item.href}
                   onClick={(e) => handleAnchorClick(e, item.href)}
-                  className="text-gray-600 hover:text-sky-500 font-medium transition-colors relative group cursor-pointer"
+                  className={`${menuTextClass} hover:text-sky-500 font-medium transition-colors relative group cursor-pointer`}
                 >
                   {item.name}
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-400 transition-all group-hover:w-full"></span>
@@ -97,7 +106,7 @@ export default function Header() {
                   key={item.name}
                   type="button"
                   onClick={() => handleRouteClick(item.href)}
-                  className="text-gray-600 hover:text-sky-500 font-medium transition-colors relative group"
+                  className={`${menuTextClass} hover:text-sky-500 font-medium transition-colors relative group`}
                 >
                   {item.name}
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-400 transition-all group-hover:w-full"></span>
@@ -117,14 +126,14 @@ export default function Header() {
                 )}
                 <Link
                   to="/mypage"
-                  className="flex items-center gap-2 text-gray-600 hover:text-sky-500 transition-colors"
+                  className={`flex items-center gap-2 ${menuTextClass} hover:text-sky-500 transition-colors`}
                 >
                   <span className="text-2xl">{userProfile?.avatar}</span>
                   <span className="font-medium">{userProfile?.name}님</span>
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="text-gray-600 hover:text-red-500 font-medium transition-colors"
+                  className={`${menuTextClass} hover:text-red-500 font-medium transition-colors`}
                 >
                   로그아웃
                 </button>
@@ -133,7 +142,7 @@ export default function Header() {
               <div className="flex items-center gap-3">
                 <Link
                   to="/login"
-                  className="text-gray-600 hover:text-sky-500 font-medium transition-colors"
+                  className={`${menuTextClass} hover:text-sky-500 font-medium transition-colors`}
                 >
                   로그인
                 </Link>
@@ -240,3 +249,4 @@ export default function Header() {
     </header>
   );
 }
+
