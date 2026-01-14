@@ -172,14 +172,14 @@ export default function Header() {
 
         {isMenuOpen && (
           <nav className="md:hidden mt-4 pb-4 border-t pt-4 bg-white/90 backdrop-blur-md shadow-sm rounded-2xl">
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col items-center gap-3">
               {menuItems.map((item) => (
                 item.isAnchor ? (
                   <a
                     key={item.name}
                     href={item.href}
                     onClick={(e) => handleAnchorClick(e, item.href)}
-                    className="text-gray-600 hover:text-sky-500 font-medium py-2 cursor-pointer"
+                    className="w-full text-center text-gray-600 hover:text-sky-500 font-medium py-2 cursor-pointer"
                   >
                     {item.name}
                   </a>
@@ -188,7 +188,7 @@ export default function Header() {
                     key={item.name}
                     type="button"
                     onClick={() => handleRouteClick(item.href)}
-                    className="text-gray-600 hover:text-sky-500 font-medium py-2 text-left cursor-pointer"
+                    className="w-full text-center text-gray-600 hover:text-sky-500 font-medium py-2 cursor-pointer"
                   >
                     {item.name}
                   </button>
