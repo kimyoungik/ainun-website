@@ -31,14 +31,14 @@ export default function AddressInput({ address, detailAddress, onAddressChange, 
         <label className="block text-gray-700 font-bold mb-2">
           주소 <span className="text-red-500">*</span>
         </label>
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <input
             type="text"
             value={address}
             placeholder="주소 검색 버튼을 클릭하세요"
             readOnly
             disabled={disabled}
-            className={`flex-1 px-4 py-3 rounded-xl border-2 outline-none transition-colors ${
+            className={`w-full sm:flex-1 px-4 py-3 rounded-xl border-2 outline-none transition-colors ${
               disabled
                 ? 'border-gray-100 bg-gray-50 text-gray-600'
                 : 'border-gray-200 bg-white cursor-not-allowed'
@@ -48,7 +48,7 @@ export default function AddressInput({ address, detailAddress, onAddressChange, 
             type="button"
             onClick={handleSearchAddress}
             disabled={disabled}
-            className={`px-6 py-3 rounded-xl font-bold transition-colors whitespace-nowrap ${
+            className={`w-full sm:w-auto px-4 sm:px-6 py-3 rounded-xl font-bold transition-colors whitespace-nowrap ${
               disabled
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 : 'bg-sky-500 text-white hover:bg-sky-600'
