@@ -156,6 +156,35 @@ class AdminService {
 
     if (error) throw error;
   }
+
+  // Free trial requests (admin)
+  async getFreeTrials(page = 1, limit = 20) {
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
+
+    const { data, error, count } = await supabase
+      .from('free_trials')
+      .select('*', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .range(from, to);
+
+    if (error) throw error;
+
+    return {
+      freeTrials: data.map((trial) => ({
+        id: trial.id,
+        name: trial.name,
+        phone: trial.phone,
+        address: trial.address,
+        status: trial.status,
+        createdAt: new Date(trial.created_at),
+      })),
+      total: count,
+      page,
+      limit,
+      totalPages: Math.ceil(count / limit),
+    };
+  }
 }
 
 export const adminService = new AdminService();

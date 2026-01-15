@@ -11,6 +11,7 @@ import AdminDashboard from './pages/Admin/AdminDashboard';
 import AdminPosts from './pages/Admin/AdminPosts';
 import AdminComments from './pages/Admin/AdminComments';
 import AdminUsers from './pages/Admin/AdminUsers';
+import AdminFreeTrials from './pages/Admin/AdminFreeTrials';
 import SubscribePage from './pages/Subscribe/SubscribePage';
 import PaymentSuccess from './pages/Subscribe/PaymentSuccess';
 import PaymentFail from './pages/Subscribe/PaymentFail';
@@ -58,6 +59,11 @@ export default function App() {
               <AdminUsers />
             </ProtectedRoute>
           } />
+          <Route path="/admin/free-trials" element={
+            <ProtectedRoute>
+              <AdminFreeTrials />
+            </ProtectedRoute>
+          } />
           {/* 구독 및 결제 페이지 */}
           <Route path="/subscribe" element={
             <ProtectedRoute>
@@ -83,4 +89,3 @@ export default function App() {
     </BrowserRouter>
   );
 }
-
