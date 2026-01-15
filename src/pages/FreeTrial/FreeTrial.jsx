@@ -60,11 +60,37 @@ export default function FreeTrial() {
       }
 
       // Supabase에 무료 체험 신청 저장
+      if (!currentUser?.id) {
+        throw new Error('로그인이 필요합니다.');
+      }
+
+      const escapeOrValue = (value) => value.replace(/\\/g, '\\\\').replace(/,/g, '\\,');
+      const emailValue = currentUser?.email || userProfile?.email || '';
       const fullAddress = `${formData.address.trim()} ${formData.detailAddress.trim()}`;
+      const orFilters = [
+        `user_id.eq.${currentUser.id}`,
+        `name.eq.${escapeOrValue(formData.name.trim())}`,
+        `phone.eq.${escapeOrValue(formData.phone.trim())}`,
+        `address.eq.${escapeOrValue(fullAddress)}`,
+        emailValue ? `email.eq.${escapeOrValue(emailValue)}` : null,
+      ].filter(Boolean).join(',');
+
+      const { data: existingRequests, error: existingError } = await supabase
+        .from('free_trials')
+        .select('id')
+        .or(orFilters)
+        .limit(1);
+
+      if (existingError) throw existingError;
+      if (existingRequests && existingRequests.length > 0) {
+        throw new Error('이미 무료 체험을 사용하셨습니다.');
+      }
       const { error: insertError } = await supabase
         .from('free_trials')
         .insert([
           {
+            user_id: currentUser.id,
+            email: emailValue || null,
             name: formData.name.trim(),
             phone: formData.phone.trim(),
             address: fullAddress,
@@ -72,7 +98,12 @@ export default function FreeTrial() {
           }
         ]);
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        if (insertError.code === '23505') {
+          throw new Error('이미 무료 체험을 사용하셨습니다.');
+        }
+        throw insertError;
+      }
 
       setSuccess(true);
       setFormData({ name: '', phone: '', address: '', detailAddress: '' });
