@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import Header from '../../components/Layout/Header';
@@ -79,9 +79,9 @@ export default function AdminDashboard() {
         {/* 페이지 헤더 */}
         <div className="text-center mb-12">
           <h1 className="font-jua text-4xl md:text-5xl text-gray-800 mb-4">
-            🛡️ <span className="text-amber-500">관리자</span> 대시보드
+            👑<span className="text-amber-500">관리자</span> 대시보드
           </h1>
-          <p className="text-gray-500 text-lg">사이트 전체를 관리할 수 있습니다</p>
+          <p className="text-gray-500 text-lg">사이트를 전체 관리할 수 있습니다.</p>
         </div>
 
         {/* 통계 카드 */}
@@ -100,13 +100,13 @@ export default function AdminDashboard() {
             </div>
 
             <div className="stat-card bg-white rounded-3xl shadow-lg p-6 text-center">
-              <div className="text-4xl mb-2">👥</div>
+              <div className="text-4xl mb-2">👤</div>
               <div className="text-3xl font-bold text-purple-500 mb-1">{stats.total_users}</div>
               <div className="text-gray-600">전체 회원</div>
             </div>
 
             <div className="stat-card bg-white rounded-3xl shadow-lg p-6 text-center">
-              <div className="text-4xl mb-2">❤️</div>
+              <div className="text-4xl mb-2">👍</div>
               <div className="text-3xl font-bold text-red-500 mb-1">{stats.total_likes}</div>
               <div className="text-gray-600">전체 좋아요</div>
             </div>
@@ -114,14 +114,14 @@ export default function AdminDashboard() {
         )}
 
         {/* 관리 메뉴 */}
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Link
             to="/admin/posts"
             className="bg-white rounded-3xl shadow-lg p-8 hover:shadow-xl transition-all hover:scale-105 text-center"
           >
-            <div className="text-6xl mb-4">📋</div>
+            <div className="text-6xl mb-4">📝</div>
             <h2 className="font-jua text-2xl text-gray-800 mb-2">게시글 관리</h2>
-            <p className="text-gray-500">모든 게시글을 확인하고 삭제할 수 있습니다</p>
+            <p className="text-gray-500">모든 게시글을 확인하고 삭제할 수 있습니다.</p>
           </Link>
 
           <Link
@@ -130,16 +130,25 @@ export default function AdminDashboard() {
           >
             <div className="text-6xl mb-4">💬</div>
             <h2 className="font-jua text-2xl text-gray-800 mb-2">댓글 관리</h2>
-            <p className="text-gray-500">모든 댓글을 확인하고 삭제할 수 있습니다</p>
+            <p className="text-gray-500">모든 댓글을 확인하고 삭제할 수 있습니다.</p>
           </Link>
 
           <Link
             to="/admin/users"
             className="bg-white rounded-3xl shadow-lg p-8 hover:shadow-xl transition-all hover:scale-105 text-center"
           >
-            <div className="text-6xl mb-4">👥</div>
+            <div className="text-6xl mb-4">👤</div>
             <h2 className="font-jua text-2xl text-gray-800 mb-2">회원 관리</h2>
-            <p className="text-gray-500">회원 정보를 확인하고 관리할 수 있습니다</p>
+            <p className="text-gray-500">회원 정보를 확인하고 관리할 수 있습니다.</p>
+          </Link>
+
+          <Link
+            to="/admin/free-trials"
+            className="bg-white rounded-3xl shadow-lg p-8 hover:shadow-xl transition-all hover:scale-105 text-center"
+          >
+            <div className="text-6xl mb-4">🎁</div>
+            <h2 className="font-jua text-2xl text-gray-800 mb-2">무료 체험 신청</h2>
+            <p className="text-gray-500">무료 체험 신청 목록을 확인합니다.</p>
           </Link>
         </div>
       </div>

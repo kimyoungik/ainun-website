@@ -25,6 +25,19 @@ function statusClass(status) {
   }
 }
 
+function statusLabel(status) {
+  switch (status) {
+    case 'completed':
+      return '완료';
+    case 'contacted':
+      return '연락 완료';
+    case 'cancelled':
+      return '취소';
+    default:
+      return '대기';
+  }
+}
+
 export default function AdminFreeTrials() {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
@@ -39,7 +52,7 @@ export default function AdminFreeTrials() {
 
   const checkAdminAndLoadFreeTrials = async () => {
     if (!currentUser) {
-      alert('Login required.');
+      alert('로그인이 필요합니다.');
       navigate('/login');
       return;
     }
@@ -47,7 +60,7 @@ export default function AdminFreeTrials() {
     try {
       const adminStatus = await adminService.isAdmin(currentUser.id);
       if (!adminStatus) {
-        alert('Admin access required.');
+        alert('관리자 권한이 없습니다.');
         navigate('/');
         return;
       }
@@ -56,8 +69,8 @@ export default function AdminFreeTrials() {
       setFreeTrials(data.freeTrials);
       setTotalPages(data.totalPages);
     } catch (error) {
-      console.error('Failed to load free trials:', error);
-      alert('Failed to load free trials.');
+      console.error('무료 체험 신청 목록 로딩 실패:', error);
+      alert('무료 체험 신청 목록을 불러오지 못했습니다.');
     } finally {
       setLoading(false);
     }
@@ -69,7 +82,7 @@ export default function AdminFreeTrials() {
         <Header />
         <div className="max-w-7xl mx-auto px-4 py-16 text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-sky-400 border-t-transparent"></div>
-          <p className="text-gray-500 mt-4">Loading...</p>
+          <p className="text-gray-500 mt-4">로딩 중...</p>
         </div>
         <Footer />
       </div>
@@ -89,15 +102,15 @@ export default function AdminFreeTrials() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="font-jua text-3xl md:text-4xl text-gray-800 mb-2">
-              Free Trial Requests
+              무료 체험 신청 목록
             </h1>
-            <p className="text-gray-500">Total {freeTrials.length}</p>
+            <p className="text-gray-500">총 {freeTrials.length}건</p>
           </div>
           <Link
             to="/admin"
             className="bg-gray-500 text-white px-6 py-3 rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105"
           >
-            Back to Dashboard
+            대시보드로
           </Link>
         </div>
 
@@ -106,11 +119,11 @@ export default function AdminFreeTrials() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b-2 border-gray-200">
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Name</th>
-                  <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Phone</th>
-                  <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Address</th>
-                  <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Status</th>
-                  <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">Created</th>
+                  <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">이름</th>
+                  <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">연락처</th>
+                  <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">주소</th>
+                  <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">상태</th>
+                  <th className="px-6 py-4 text-left text-sm font-bold text-gray-700">신청일</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -121,7 +134,7 @@ export default function AdminFreeTrials() {
                     <td className="px-6 py-4 text-sm text-gray-600 max-w-xs truncate">{trial.address}</td>
                     <td className="px-6 py-4 text-sm">
                       <span className={`px-3 py-1 rounded-full text-xs font-bold ${statusClass(trial.status)}`}>
-                        {trial.status}
+                        {statusLabel(trial.status)}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600">{formatDate(trial.createdAt)}</td>
@@ -133,7 +146,7 @@ export default function AdminFreeTrials() {
 
           {freeTrials.length === 0 && (
             <div className="text-center py-16">
-              <p className="text-gray-500 text-lg">No free trial requests yet.</p>
+              <p className="text-gray-500 text-lg">무료 체험 신청이 아직 없습니다.</p>
             </div>
           )}
         </div>
@@ -145,7 +158,7 @@ export default function AdminFreeTrials() {
               disabled={currentPage === 1}
               className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              Prev
+              이전
             </button>
 
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
@@ -167,7 +180,7 @@ export default function AdminFreeTrials() {
               disabled={currentPage === totalPages}
               className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              Next
+              다음
             </button>
           </div>
         )}
