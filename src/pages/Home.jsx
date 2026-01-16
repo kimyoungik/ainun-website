@@ -9,8 +9,6 @@ export default function Home() {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const heroVideoRef = useRef(null);
-  const heroVideos = ['/mainvidio1.mp4', '/mainvidio2.mp4', '/mainvidio3.mp4'];
-  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
 
   const fallbackTestimonials = [
     { name: "김지유 (초등 3학년)", text: "매주 리틀타임즈 신문이 오는 날이 제일 기다려져요! 어려운 뉴스도 쉽게 알려줘서 좋아요.", avatar: "🧒" },
@@ -74,7 +72,7 @@ export default function Home() {
     if (playPromise?.catch) {
       playPromise.catch(() => {});
     }
-  }, [currentVideoIndex]);
+  }, []);
 
 
   return (
@@ -157,13 +155,11 @@ export default function Home() {
         <video
           ref={heroVideoRef}
           className="absolute inset-0 h-full w-full object-cover"
-          src={heroVideos[currentVideoIndex]}
+          src="/mainvidio1.mp4"
           autoPlay
+          loop
           muted
           playsInline
-          onEnded={() => {
-            setCurrentVideoIndex((prev) => (prev + 1) % heroVideos.length);
-          }}
           onCanPlay={() => {
             const video = heroVideoRef.current;
             if (video) {
