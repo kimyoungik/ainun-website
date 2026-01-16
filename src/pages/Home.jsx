@@ -9,6 +9,10 @@ export default function Home() {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const heroVideoRef = useRef(null);
+  const heroVideos = ['/mainvidio1.mp4', '/mainvidio2.mp4', '/mainvidio3.mp4'];
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const [isVideoFading, setIsVideoFading] = useState(false);
+  const fadeTimeoutRef = useRef(null);
 
   const fallbackTestimonials = [
     { name: "김지유 (초등 3학년)", text: "매주 리틀타임즈 신문이 오는 날이 제일 기다려져요! 어려운 뉴스도 쉽게 알려줘서 좋아요.", avatar: "🧒" },
@@ -72,6 +76,14 @@ export default function Home() {
     if (playPromise?.catch) {
       playPromise.catch(() => {});
     }
+  }, [currentVideoIndex]);
+
+  useEffect(() => {
+    return () => {
+      if (fadeTimeoutRef.current) {
+        clearTimeout(fadeTimeoutRef.current);
+      }
+    };
   }, []);
 
   return (
@@ -153,17 +165,26 @@ export default function Home() {
       <section className="relative h-[90vh] min-h-[640px] w-full overflow-hidden bg-black">
         <video
           ref={heroVideoRef}
-          className="absolute inset-0 h-full w-full object-cover"
-          src="/seoul.mp4"
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${isVideoFading ? 'opacity-0' : 'opacity-100'}`}
+          src={heroVideos[currentVideoIndex]}
           autoPlay
-          loop
           muted
           playsInline
+          onEnded={() => {
+            setIsVideoFading(true);
+            if (fadeTimeoutRef.current) {
+              clearTimeout(fadeTimeoutRef.current);
+            }
+            fadeTimeoutRef.current = setTimeout(() => {
+              setCurrentVideoIndex((prev) => (prev + 1) % heroVideos.length);
+            }, 250);
+          }}
           onCanPlay={() => {
             const video = heroVideoRef.current;
             if (video) {
               video.play().catch(() => {});
             }
+            setIsVideoFading(false);
           }}
         />
         <div className="absolute inset-0 bg-black/60" />

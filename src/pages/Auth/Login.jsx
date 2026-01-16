@@ -4,6 +4,22 @@ import { useAuth } from '../../contexts/AuthContext';
 import Header from '../../components/Layout/Header';
 import Footer from '../../components/Layout/Footer';
 
+const copy = {
+  title: '로그인',
+  subtitle: '리틀타임즈와 함께해요!',
+  google: 'Google로 간편 로그인하기',
+  emailLabel: '이메일',
+  emailPlaceholder: '이메일을 입력하세요',
+  passwordLabel: '비밀번호',
+  passwordPlaceholder: '비밀번호를 입력하세요',
+  submit: '로그인',
+  submitting: '로그인 중...',
+  noAccount: '아직 회원이 아니신가요?',
+  registerLink: '회원가입',
+  googleError: '구글 로그인에 실패했습니다.',
+  loginError: '로그인에 실패했습니다.',
+};
+
 export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -11,7 +27,7 @@ export default function Login() {
 
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
   });
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -20,7 +36,7 @@ export default function Login() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
     setError('');
   };
 
@@ -29,7 +45,7 @@ export default function Login() {
     try {
       await loginWithGoogle();
     } catch (err) {
-      setError(err.message || 'Google login failed.');
+      setError(err.message || copy.googleError);
     }
   };
 
@@ -42,7 +58,7 @@ export default function Login() {
       await login(formData.email, formData.password);
       navigate(from, { replace: true });
     } catch (err) {
-      setError(err.message || '로그인에 실패했습니다.');
+      setError(err.message || copy.loginError);
     } finally {
       setIsSubmitting(false);
     }
@@ -59,10 +75,8 @@ export default function Login() {
 
       <div className="max-w-md mx-auto px-4 py-16">
         <div className="text-center mb-8">
-          <h1 className="font-jua text-4xl text-gray-800 mb-2">
-            로그인
-          </h1>
-          <p className="text-gray-500">리틀타임즈와 함께해요!</p>
+          <h1 className="font-jua text-4xl text-gray-800 mb-2">{copy.title}</h1>
+          <p className="text-gray-500">{copy.subtitle}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-3xl shadow-lg p-8">
@@ -77,7 +91,7 @@ export default function Login() {
               <path fill="#4CAF50" d="M24 44c5.3 0 10.2-2 13.9-5.3l-6.4-5.4C29.6 35.7 26.9 36 24 36c-5.6 0-10.1-3.3-11.9-7.9l-6.6 5.1C8.9 39.7 16 44 24 44z"/>
               <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-1.1 3-3.3 5.4-6.1 6.9l6.4 5.4C39.9 36.8 44 31 44 24c0-1.3-.1-2.7-.4-3.5z"/>
             </svg>
-            Google로 간편 로그인하기
+            {copy.google}
           </button>
 
           {error && (
@@ -87,26 +101,26 @@ export default function Login() {
           )}
 
           <div className="mb-4">
-            <label className="block text-gray-700 font-bold mb-2">이메일</label>
+            <label className="block text-gray-700 font-bold mb-2">{copy.emailLabel}</label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="이메일을 입력하세요"
+              placeholder={copy.emailPlaceholder}
               required
               className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-sky-400 outline-none transition-colors"
             />
           </div>
 
           <div className="mb-6">
-            <label className="block text-gray-700 font-bold mb-2">비밀번호</label>
+            <label className="block text-gray-700 font-bold mb-2">{copy.passwordLabel}</label>
             <input
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="비밀번호를 입력하세요"
+              placeholder={copy.passwordPlaceholder}
               required
               className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-sky-400 outline-none transition-colors"
             />
@@ -117,14 +131,14 @@ export default function Login() {
             disabled={isSubmitting}
             className="w-full bg-gradient-to-r from-sky-400 to-sky-500 text-white py-4 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 mb-4"
           >
-            {isSubmitting ? '로그인 중...' : '로그인'}
+            {isSubmitting ? copy.submitting : copy.submit}
           </button>
 
           <div className="text-center">
             <p className="text-gray-500 text-sm">
-              아직 회원이 아니신가요?{' '}
+              {copy.noAccount}{' '}
               <Link to="/register" className="text-sky-500 font-bold hover:underline">
-                회원가입
+                {copy.registerLink}
               </Link>
             </p>
           </div>

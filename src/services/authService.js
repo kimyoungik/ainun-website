@@ -1,63 +1,87 @@
-import { supabase } from '../lib/supabase'
+import { supabase } from '../lib/supabase';
 
 class AuthService {
-  async signUp(email, password, profileData) {
+  async signUp(email, password, profileData, options = {}) {
+    const { redirectTo } = options;
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-    })
+      options: {
+        emailRedirectTo: redirectTo,
+        data: {
+          name: profileData.name,
+          grade: profileData.grade,
+          avatar: profileData.avatar,
+          phone: profileData.phone || null,
+          address: profileData.address || null,
+        },
+      },
+    });
 
-    if (error) throw error
-    if (!data?.user) throw new Error('Sign up failed.')
+    if (error) {
+      const message = error.message || '';
+      if (message.toLowerCase().includes('already registered')) {
+        throw new Error('이미 사용 중인 이메일입니다.');
+      }
+      throw error;
+    }
 
-    const { error: profileError } = await supabase
-      .from('users')
-      .insert({
-        id: data.user.id,
-        email,
-        name: profileData.name,
-        grade: profileData.grade,
-        avatar: profileData.avatar,
-        phone: profileData.phone || null,
-        address: profileData.address || null,
-      })
+    if (!data?.user) {
+      throw new Error('회원가입에 실패했습니다.');
+    }
 
-    if (profileError) throw profileError
+    if (Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+      throw new Error('이미 사용 중인 이메일입니다.');
+    }
 
-    return data.user
+    return data.user;
   }
 
   async signIn(email, password) {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
-    })
+    });
 
-    if (error) throw error
-    return data.user
+    if (error) {
+      const message = error.message || '';
+      if (message.toLowerCase().includes('email not confirmed')) {
+        throw new Error('이메일 인증이 필요합니다. 이메일을 확인해주세요.');
+      }
+      throw error;
+    }
+
+    const user = data.user;
+    const confirmedAt = user?.email_confirmed_at || user?.confirmed_at;
+    if (!confirmedAt) {
+      await supabase.auth.signOut();
+      throw new Error('이메일 인증이 필요합니다. 이메일을 확인해주세요.');
+    }
+
+    return user;
   }
 
   async signInWithGoogle(redirectTo) {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: redirectTo ? { redirectTo } : undefined,
-    })
+    });
 
-    if (error) throw error
-    return data
+    if (error) throw error;
+    return data;
   }
 
   async signOut() {
-    const { error } = await supabase.auth.signOut()
-    if (error) throw error
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
   }
 
   async getCurrentUser() {
-    const { data, error } = await supabase.auth.getUser()
+    const { data, error } = await supabase.auth.getUser();
     if (error && error.message !== 'Auth session missing!') {
-      throw error
+      throw error;
     }
-    return data.user
+    return data.user;
   }
 
   async getProfile(userId) {
@@ -65,10 +89,10 @@ class AuthService {
       .from('users')
       .select('*')
       .eq('id', userId)
-      .maybeSingle()
+      .maybeSingle();
 
-    if (error) throw error
-    return data
+    if (error) throw error;
+    return data;
   }
 
   async updateProfile(userId, profileData) {
@@ -80,25 +104,25 @@ class AuthService {
       })
       .eq('id', userId)
       .select()
-      .single()
+      .single();
 
-    if (error) throw error
-    return data
+    if (error) throw error;
+    return data;
   }
 
   async ensureProfileFromUser(user) {
-    if (!user) return null
+    if (!user) return null;
 
-    const existing = await this.getProfile(user.id)
-    if (existing) return existing
+    const existing = await this.getProfile(user.id);
+    if (existing) return existing;
 
-    const metadata = user.user_metadata || {}
+    const metadata = user.user_metadata || {};
     const name =
       metadata.full_name ||
       metadata.name ||
-      (user.email ? user.email.split('@')[0] : '사용자')
-    const grade = '초등 3학년'
-    const avatar = '😀'
+      (user.email ? user.email.split('@')[0] : '사용자');
+    const grade = '초등 3학년';
+    const avatar = '사용자';
 
     const { data, error } = await supabase
       .from('users')
@@ -112,15 +136,15 @@ class AuthService {
         address: null,
       })
       .select()
-      .single()
+      .single();
 
-    if (error) throw error
-    return data
+    if (error) throw error;
+    return data;
   }
 
   onAuthStateChange(callback) {
-    return supabase.auth.onAuthStateChange(callback)
+    return supabase.auth.onAuthStateChange(callback);
   }
 }
 
-export const authService = new AuthService()
+export const authService = new AuthService();

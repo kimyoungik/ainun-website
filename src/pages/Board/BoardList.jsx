@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import Header from '../../components/Layout/Header';
@@ -16,32 +16,50 @@ export default function BoardList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const postsPerPage = 10;
+  const latestRequestRef = useRef(0);
 
   useEffect(() => {
     loadPosts(currentPage);
   }, [currentPage, location.key]);
 
   const loadPosts = async (page) => {
+    const requestId = Date.now();
+    latestRequestRef.current = requestId;
     setLoading(true);
     setErrorMessage('');
+    let timeoutId = null;
+    let settled = false;
+
     try {
       const timeoutMs = 8000;
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('timeout')), timeoutMs);
-      });
-      const data = await Promise.race([
-        boardService.getPosts(page, postsPerPage),
-        timeoutPromise
-      ]);
+      timeoutId = setTimeout(() => {
+        if (settled || latestRequestRef.current !== requestId) return;
+        settled = true;
+        setPosts([]);
+        setTotalPages(1);
+        setErrorMessage('게시글을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.');
+        setLoading(false);
+      }, timeoutMs);
+
+      const data = await boardService.getPosts(page, postsPerPage);
+      if (latestRequestRef.current !== requestId || settled) return;
+      settled = true;
       setPosts(data.posts || []);
       setTotalPages(data.totalPages || 1);
     } catch (error) {
-      console.error('??? ?? ??:', error);
+      if (latestRequestRef.current !== requestId || settled) return;
+      settled = true;
+      console.error('게시글 로딩 실패:', error);
       setPosts([]);
       setTotalPages(1);
-      setErrorMessage('???? ????? ??????. ?? ??????.');
+      setErrorMessage('게시글을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.');
     } finally {
-      setLoading(false);
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      if (latestRequestRef.current === requestId) {
+        setLoading(false);
+      }
     }
   };
 
@@ -80,7 +98,6 @@ export default function BoardList() {
       <Header />
 
       <div className="max-w-6xl mx-auto px-4 py-16">
-        {/* 페이지 헤더 */}
         <div className="text-center mb-12">
           <h1 className="font-jua text-4xl md:text-5xl text-gray-800 mb-4">
             <span className="text-amber-500">독자</span> 후기 게시판
@@ -88,17 +105,15 @@ export default function BoardList() {
           <p className="text-gray-500 text-lg">리틀타임즈와 함께하는 친구들의 생생한 후기를 확인해보세요!</p>
         </div>
 
-        {/* 글쓰기 버튼 */}
         <div className="flex justify-end mb-8">
           <button
             onClick={handleWriteClick}
             className="bg-gradient-to-r from-sky-400 to-sky-500 text-white px-6 py-3 rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105"
           >
-            ✏️ 글쓰기
+            글쓰기
           </button>
         </div>
 
-        {/* 로딩 상태 */}
         {loading ? (
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-sky-400 border-t-transparent"></div>
@@ -111,12 +126,11 @@ export default function BoardList() {
               onClick={() => loadPosts(currentPage)}
               className="inline-block text-sky-500 font-medium hover:underline cursor-pointer"
             >
-              ?? ??
+              다시 시도
             </button>
           </div>
         ) : (
           <>
-            {/* 게시글 목록 */}
             {posts.length > 0 ? (
               <div className="grid md:grid-cols-2 gap-6 mb-12">
                 {posts.map((post) => (
@@ -125,7 +139,6 @@ export default function BoardList() {
               </div>
             ) : (
               <div className="text-center py-16">
-                <div className="text-6xl mb-4">📭</div>
                 <p className="text-gray-500 text-lg">아직 작성된 게시글이 없습니다.</p>
                 <button
                   onClick={handleWriteClick}
@@ -136,7 +149,6 @@ export default function BoardList() {
               </div>
             )}
 
-            {/* 페이지네이션 */}
             {totalPages > 1 && (
               <div className="flex justify-center gap-2">
                 <button
